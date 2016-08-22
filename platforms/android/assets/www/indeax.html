@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" href="lib/onsenui/css/onsenui.css"/>
+        <link rel="stylesheet" href="lib/onsenui/css/ionicons/css/ionicons.css"/>
+        <link rel="stylesheet" href="lib/onsenui/css/onsen-css-components.css"/>
+        <link rel="stylesheet" href="lib/onsenui/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="lib/onsenui/css/jquery-ui.min.css"/>
+        <link rel="stylesheet" href="lib/onsenui/css/lightslider.min.css"/>
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+        
+        
+        <script type="text/javascript" src="lib/onsenui/js/onsenui.js"></script>
+        <script type="text/javascript" src="lib/onsenui/js/jquery-1.11.3.min.js"></script>
+        <script type="text/javascript" src="lib/onsenui/js/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="lib/onsenui/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="lib/onsenui/js/lightslider.min.js"></script>
+        <!-- <script src="lib/onsenui/js/angular-onsenui.min.js"></script> -->
+        <title>HOME | Revo</title>
+ 
+        <style>
+        ons-carousel-item {
+          display: table;
+          text-align: center;
+        }
+
+        .item-label {
+          display: table-cell;
+          vertical-align: middle;
+          color: white;
+          line-height: 1;
+          font-size: 48px;
+          font-weight: bold;
+        }
+
+        .cover-label {
+          text-align: center;
+          position: absolute;
+          left: 0px;
+          width: 100%;
+          bottom: 10px;
+          color: white;
+        }
+    </style>
+    <script>
+      $( function() {
+        var spinner = $( "#spinner" ).spinner();
+     
+      } );
+  </script>
+    <script>
+        function setIndex(){
+          var cnt = document.getElementById('myC').getCarouselItemCount();
+          var midItem = Math.floor(cnt/2);
+          document.getElementById('myC').setActiveCarouselItemIndex(midItem);
+        }
+    </script>
+
+
+        <script>
+
+          var prev = function() {
+            var carousel = document.getElementById('carousel');
+            carousel.prev();            
+          };
+
+          var next = function() {
+            var carousel = document.getElementById('carousel');
+            carousel.next();            
+          };
+
+
+          var check_menu = false;
+          var check_produk = false;
+
+          ons.ready(function() {
+            window.fn = {};
+
+            window.fn.open = function() {
+              var menu = document.getElementById('menu');
+              var result;
+              // var para = document.createElement("p");
+              // var node = document.createTextNode("This is new.");
+
+
+            //   <ons-list-header style="font-size:18px;" class="item-header" tappable>
+            //   <div>
+            //       <a class="collapsed panel-title" role="button" data-toggle="collapse" data-parent="#accordions" href="#collapseOnes" aria-expanded="false" aria-controls="collapseOnes">
+            //           <div role="tab" id="headingOnes">
+            //             Wanita
+            //           </div>
+            //       </a>
+
+            //       <div id="collapseOnes" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOnes">
+            //         <div>
+            //             <ons-list-item class="list-item" onclick="fn.load('wanita.html')" tappable>
+            //               Pakaian
+            //               <div class="right ion-chevron-right"></div>
+            //             </ons-list-item>
+            //             <ons-list-item class="list-item" onclick="fn.load('wanita.html')" tappable>
+            //               Sepatu
+            //               <div class="right ion-chevron-right"></div>
+            //             </ons-list-item>
+            //             <ons-list-item class="list-item" onclick="fn.load('wanita.html')" tappable>
+            //               Aksesoris
+            //               <div class="right ion-chevron-right"></div>
+            //             </ons-list-item>
+            //             <ons-list-item class="list-item" onclick="fn.load('wanita.html')" tappable>
+            //               Jam Tangan
+            //               <div class="right ion-chevron-right"></div>
+            //             </ons-list-item>
+            //         </div>
+            //       </div>
+            //   </div>
+            // </ons-list-header>
+
+              if(!check_menu)
+              {
+                var data = {
+                  "action": "test1"
+                };
+
+                var url = 'http://localhost/revo-ori/www/test.php';
+                var xhr = new XMLHttpRequest();
+                if ("withCredentials" in xhr){
+                  xhr.open("GET", url, true);
+                } else if (typeof XDomainRequest != "undefined"){
+                  xhr = new XDomainRequest();
+                  xhr.open(method, url);
+                } else {
+                  xhr = null;
+                }
+
+                xhr.setRequestHeader(
+                  'X-Requested-With', 'XMLHttpRequest');
+                xhr.send();
+
+                data = $(this).serialize() + "&" + $.param(data);
+                $.ajax
+                ({
+                      url: url, //Relative or absolute path to response.php file
+                      type: "GET",
+                      crossDomain: true,
+                      data: data,
+                      dataType: "json", 
+                      async: false,
+
+                      success: function(data) {
+                        if(data != "" && data != null)
+                        {
+                            console.log(data);
+                            result = data;
+                            status = true;
+                        }
+                      },
+                      error: function( jqXhr, textStatus, errorThrown ) {
+                          console.log( errorThrown );
+                      } 
+                });
+                var categories = JSON.parse(JSON.stringify(result["menu_categories"]));
+                for (var i = 0; i < categories.length; i++) {
+                  //PARENT CATEGORIES
+
+                  //Buat header
+                  var ons_header              = document.createElement('ons-list-header');
+                  ons_header.style.fontSize   = "11px";
+                  ons_header.setAttribute("tappable",'');
+                  ons_header.setAttribute("class",'item-header list__header');
+
+                  document.getElementsByTagName('ons-list')[0].appendChild(ons_header);
+
+                  //Buat DIV
+                  var div                     = document.createElement('div');
+                  ons_header.appendChild(div);
+
+                  //Buat a href biar bisa ditekan Xd LOL
+                  var a                       = document.createElement('a');
+                  a.setAttribute("class",'collapsed panel-title');
+                  a.setAttribute("role",'button');
+                  a.setAttribute("data-toggle",'collapse');
+                  a.setAttribute("data-parent",'#accordions');
+                  a.setAttribute("href",'#collapse'+i);
+                  a.setAttribute("aria-expanded",'false');
+                  a.setAttribute("aria-controls",'collapse'+i);
+                  div.appendChild(a);
+
+                  //Buat DIV baru
+                  var div_categories          = document.createElement('div');
+                  div_categories.setAttribute("id",'headings'+i);
+                  div_categories.setAttribute("role",'tab');
+                  div_categories.innerHTML = categories[i]["name"];
+                  a.appendChild(div_categories);
+
+                  //CHILD CATEGORIES
+
+                  //Buat DIV penampung
+                  var div_subcategories       = document.createElement('div');
+                  var div_child               = document.createElement('div');
+
+                  div_subcategories.setAttribute("id",'collapse'+i);
+                  div_subcategories.setAttribute("class",'panel-collapse collapses collapse');
+                  div_subcategories.setAttribute("role",'tabpanel');
+                  div_subcategories.setAttribute("aria-labelledby",'heading'+i);
+                  div_subcategories.appendChild(div_child);
+
+                  div.appendChild(div_subcategories);
+
+                  subcategories = categories[i]["sub_categories"];
+
+                  for (var j = 0; j < subcategories.length; j++) {
+                    var ons_list_item           = document.createElement('ons-list-item');
+                    ons_list_item.setAttribute("onclick","fn.load('wanita.html','"+subcategories[j]["slug"]+"')");
+                    ons_list_item.setAttribute("tappable",'');
+                    ons_list_item.setAttribute("class",'list-item list__item');
+                    ons_list_item.innerHTML     = subcategories[j]["name"];
+
+                    var div_anotherdiv = document.createElement('div');
+                    div_anotherdiv.setAttribute("class",'right ion-chevron-right');
+                    ons_list_item.appendChild(div_anotherdiv);
+
+                    div_subcategories.appendChild(ons_list_item);
+                  }
+
+
+                }
+                check_menu = true;
+              }
+
+              menu.open();
+            };
+            //document.querySelectorAll('.indicators')[0].style.color = 'red';
+             
+            var carousel = document.addEventListener('postchange', function(event) {
+                console.log('Changed to ' + event.activeIndex);
+                document.querySelectorAll('.indicators')[event.lastActiveIndex].style.color = 'white';
+                document.querySelectorAll('.indicators')[event.activeIndex].style.color = '#085078';
+              });
+
+            // .controller('NotificationController', function($scope) {
+            //         $scope.alert = function(material) {
+            //           ons.notification.alert({
+            //             message: 'An error has occurred!',
+            //             modifier: material ? 'material' : undefined
+            //           });
+            //         }
+
+            //         // $scope.confirm = function(material) {
+            //         //   var mod = material ? 'material' : undefined;
+                      
+            //         //   ons.notification.confirm({
+            //         //     message: 'Are you sure you want to continue?',
+            //         //     modifier: mod,
+            //         //     callback: function(idx) {
+            //         //       switch (idx) {
+            //         //         case 0:
+            //         //           ons.notification.alert({
+            //         //             message: 'You pressed "Cancel".',
+            //         //             modifier: mod
+            //         //           });
+            //         //           break;
+            //         //         case 1:
+            //         //           ons.notification.alert({
+            //         //             message: 'You pressed "OK".',
+            //         //             modifier: mod
+            //         //           });
+            //         //           break;
+            //         //       }
+            //         //     }
+            //         //   });
+            //         // }
+
+            //         // $scope.prompt = function(material) {
+            //         //   var mod = material ? 'material' : undefined;
+            //         //   ons.notification.prompt({
+            //         //     message: "Please enter your age",
+            //         //     modifier: mod,
+            //         //     callback: function(age) {
+            //         //       ons.notification.alert({
+            //         //         message: 'You are ' + parseInt(age || 0) + ' years old.',
+            //         //         modifier: mod
+            //         //       });
+            //         //     }
+            //         //   });
+            //         // }
+            //       });
+
+            window.fn.load = function(page, slug) {
+                var status = false;
+                var result;
+
+                console.log(page);
+
+                if(page == "wanita.html")
+                {
+                  console.log("IN !!!");
+                  if(!check_produk)
+                  {
+                    var data = {
+                    "action": "single_produk",
+                    "slug"  : slug,
+                    };
+
+                    var url = 'http://localhost/revo-ori/www/test.php';
+                    var xhr = new XMLHttpRequest();
+                    if ("withCredentials" in xhr){
+                      xhr.open("GET", url, true);
+                    } else if (typeof XDomainRequest != "undefined"){
+                      xhr = new XDomainRequest();
+                      xhr.open(method, url);
+                    } else {
+                      xhr = null;
+                    }
+
+                    xhr.setRequestHeader(
+                      'X-Requested-With', 'XMLHttpRequest');
+                    xhr.send();
+
+                    data = $(this).serialize() + "&" + $.param(data);
+                    $.ajax
+                    ({
+                          url: url, //Relative or absolute path to response.php file
+                          type: "GET",
+                          crossDomain: true,
+                          data: data,
+                          dataType: "json", 
+                          async: false,
+
+                          success: function(data) {
+                            if(data != "" && data != null)
+                            {
+                                console.log(data);
+                                result = data;
+                                status = true;
+                            }
+                          },
+                          error: function( jqXhr, textStatus, errorThrown ) {
+                              console.log( errorThrown );
+                          } 
+                    });
+                    if(status)
+                    {
+                      var content = document.getElementById('content');
+                      var menu = document.getElementById('menu');
+                      content.load(page)
+                        .then(menu.close.bind(menu));
+
+                      setTimeout(function() {
+                        console.log('ready!');
+
+                          for (var i = 0; i < Object.keys(result["produk"]).length; i++) {
+                            var produk = JSON.parse(JSON.stringify(result["produk"][i]));
+
+                            var div               = document.getElementById('product');
+
+                            var div_produk        = document.createElement('div');
+                            div_produk.setAttribute("class",'col-xs-6');
+                            div_produk.setAttribute("style",'padding:0px;');
+
+                            var ons_button        = document.createElement('ons-button');
+                            ons_button.setAttribute("class",'item-set button');
+                            ons_button.setAttribute("onclick","fn.load('detail.html')");
+
+                            var div_image         = document.createElement('div');
+                            div_image.setAttribute("class",'sub-item-image');
+
+                            var image             = document.createElement('img');
+                            image.setAttribute("style",'width:100%;');
+                            image.setAttribute("src",produk["gambar_produk"][0]["src"]);
+                            div_image.appendChild(image);
+
+                            var div_detail        = document.createElement('div');
+                            div_detail.setAttribute("class",'sub-item-detail');
+
+                            var p1                = document.createElement('p');
+                            p1.innerHTML          = produk["nama_produk"];
+                            // var p2                = document.createElement('p');
+                            // p2.innerHTML          = "Nike";
+                            var p3                = document.createElement('p');
+                            p3.setAttribute("class",'ion-pricetag');
+                            p3.innerHTML          = "<bold> "+produk["harga"]+",-</bold>";
+
+                            div_detail.appendChild(p1);
+                            // div_detail.appendChild(p2);
+                            div_detail.appendChild(p3);
+
+                            ons_button.appendChild(div_image);
+                            ons_button.appendChild(div_detail);
+                            div_produk.appendChild(ons_button);
+                            div.appendChild(div_produk);
+
+                            // ons_list_item.setAttribute("onclick","fn.load('wanita.html','"+subcategories[j]["slug"]+"')");
+                            // document.getElementById("data"+i).innerHTML = 
+                            //     "<br>"+produk["nama_produk"]+
+                            //     "<br>"+produk["harga"]+
+                            //     "<br>"+produk["range_harga"]+
+                            //     "<br>"+produk["deskripsi"]; 
+
+                            // //Kategori
+                            // for (var j = 0; j < Object.keys(produk["kategori_produk"]).length; j++) {
+                            //   var temp  = produk["kategori_produk"][j];
+
+                            //   document.getElementById("kategori"+i).innerHTML += "Kategori : "+temp+", ";
+                            // }
+
+                            //Gambar
+                            // for (var j = 0; j < Object.keys(produk["gambar_produk"]).length; j++) {
+                            //   var temp  = produk["gambar_produk"][j]["src"];
+                            //   var t     = i+""+j;
+                            //   document.getElementById("gambar"+t).innerHTML = "<img src="+temp+"  >";
+                            // }
+
+                          }
+                      }, 10);
+                    }
+                    check_produk = true;
+                  }
+                }
+                else if(page == "detail.html")
+                {
+                  var content = document.getElementById('content');
+                  var menu = document.getElementById('menu');
+                  content.load(page)
+                    .then(menu.close.bind(menu));
+                }
+                // else
+                // {
+                //     var content = document.getElementById('content');
+                //     var menu = document.getElementById('menu');
+                //     content.load(page)
+                //       .then(menu.close.bind(menu));
+                // }
+
+                // Sementara
+                // var content = document.getElementById('content');
+                //     var menu = document.getElementById('menu');
+                //     content.load(page)
+                //       .then(menu.close.bind(menu));
+            };
+
+
+            window.fn.login = function(page) {
+              var username = document.getElementById('username').value;
+              var password = document.getElementById('password').value;
+              var content = document.getElementById('content');
+
+              if (username === 'bob' && password === 'secret') {
+                content.load(page);
+              }
+              else {
+                ons.notification.alert('Incorrect username or password.');
+              }
+            };
+            
+          });
+          
+        </script>
+        <!-- <script>
+           $(document).ready(function() {
+          $("#content-slider").lightSlider({
+                    loop:true,
+                    keyPress:true
+                });
+                $('#image-gallery').lightSlider({
+                    gallery:true,
+                    item:1,
+                    thumbItem:9,
+                    slideMargin: 0,
+                    speed:500,
+                    auto:true,
+                    loop:true,
+                    onSliderLoad: function() {
+                        $('#image-gallery').removeClass('cS-hidden');
+                    }  
+                });
+        });
+    </script> -->
+
+    </head>
+    
+    <body>
+
+    <ons-splitter>
+      <ons-splitter-side id="menu" side="left" width="220px" collapse swipeable>
+        <ons-page>
+          <ons-list>
+            <ons-list-item style="font-size:18px;" onclick="fn.load('home.html')" tappable>
+               <div class="left ion-home" style="margin-right:20px;"></div>
+               Home
+            </ons-list-item>
+            <ons-list-item style="font-size:18px;" onclick="fn.load('login.html')" tappable>
+               <div class="left ion-person" style="margin-right:20px;"></div>
+               Login
+            </ons-list-item>
+            <ons-list-item  style="font-size:18px;" onclick="fn.load('cart.html')" tappable>
+               <div class="left ion-ios-cart" style="margin-right:20px;"></div>
+               Cart
+            </ons-list-item>
+
+<!-- INI YANG DIUBAH ================================================================================================= -->
+
+
+            <!-- <ons-list-header style="font-size:18px;" class="item-header" tappable>
+              <div>
+                  <a class="collapsed panel-title" role="button" data-toggle="collapse" data-parent="#accordions" href="#collapseOnes" aria-expanded="false" aria-controls="collapseOnes">
+                      <div role="tab" id="headingOnes">
+                        Wanita
+                      </div>
+                  </a>
+
+                  <div id="collapseOnes" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOnes">
+                    <div>
+                        <ons-list-item class="list-item" onclick="fn.load('wanita.html')" tappable>
+                          Pakaian
+                          <div class="right ion-chevron-right"></div>
+                        </ons-list-item>
+                        <ons-list-item class="list-item" onclick="fn.load('wanita.html')" tappable>
+                          Sepatu
+                          <div class="right ion-chevron-right"></div>
+                        </ons-list-item>
+                        <ons-list-item class="list-item" onclick="fn.load('wanita.html')" tappable>
+                          Aksesoris
+                          <div class="right ion-chevron-right"></div>
+                        </ons-list-item>
+                        <ons-list-item class="list-item" onclick="fn.load('wanita.html')" tappable>
+                          Jam Tangan
+                          <div class="right ion-chevron-right"></div>
+                        </ons-list-item>
+                    </div>
+                  </div>
+              </div>
+            </ons-list-header> -->
+
+
+
+
+
+
+<!-- INI YANG DIUBAH ================================================================================================= -->
+
+
+
+            <!-- <ons-list-header style="font-size:18px;" class="item-header" tappable>
+              <div>
+                  <a class="collapsed panel-title" role="button" data-toggle="collapse" data-parent="#accordions" href="#collapseTwos" aria-expanded="false" aria-controls="collapseTwos">
+                      <div role="tab" id="headingTwos">
+                        Pria
+                      </div>
+                      
+                  </a>
+                  <div id="collapseTwos" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwos">
+                    <div>
+                        <ons-list-item class="list-item" onclick="fn.load('pria.html')" tappable>
+                          Pakaian
+                          <div class="right ion-chevron-right"></div>
+                        </ons-list-item>
+                        <ons-list-item class="list-item" onclick="fn.load('pria.html')" tappable>
+                          Sepatu
+                          <div class="right ion-chevron-right"></div>
+                        </ons-list-item>
+                        <ons-list-item class="list-item" onclick="fn.load('pria.html')" tappable>
+                          Aksesoris
+                          <div class="right ion-chevron-right"></div>
+                        </ons-list-item>
+                        <ons-list-item class="list-item" onclick="fn.load('pria.html')" tappable>
+                          Jam Tangan
+                          <div class="right ion-chevron-right"></div>
+                        </ons-list-item>
+                    </div>
+                  </div>
+              </div>
+            </ons-list-header>
+            <ons-list-header style="font-size:18px;" class="item-header" tappable>
+              <div>
+                  <a class="collapsed panel-title" role="button" data-toggle="collapse" data-parent="#accordions" href="#collapseThrees" aria-expanded="false" aria-controls="collapseThrees">
+                      <div role="tab" id="headingThrees">
+                        Anak-anak
+                      </div>
+                  </a>
+                  <div id="collapseThrees" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThrees">
+                    <div>
+                        <ons-list-item class="list-item" onclick="fn.load('anak.html')" tappable>
+                          Pakaian
+                          <div class="right ion-chevron-right"></div>
+                        </ons-list-item>
+                        <ons-list-item class="list-item" onclick="fn.load('anak.html')" tappable>
+                          Sepatu
+                          <div class="right ion-chevron-right"></div>
+                        </ons-list-item>
+                    </div>
+                  </div>
+              </div> -->
+            <!-- </ons-list-header>
+            <ons-list-header class="item-header" tappable>
+            </ons-list-header> -->
+            <!-- //list jenis lain -->
+            <!-- <ons-list-header class="item-header">
+              Wanita
+            </ons-list-header>
+            <ons-list-item onclick="fn.load('wanita.html')" tappable>
+              Pakaian
+              <div class="right ion-chevron-right"></div>
+            </ons-list-item>
+            <ons-list-item onclick="fn.load('wanita.html')" tappable>
+              Sepatu
+              <div class="right ion-chevron-right"></div>
+            </ons-list-item>
+            <ons-list-item onclick="fn.load('wanita.html')" tappable>
+              Aksesoris
+              <div class="right ion-chevron-right"></div>
+            </ons-list-item>
+            <ons-list-item onclick="fn.load('wanita.html')" tappable>
+              Jam Tangan
+              <div class="right ion-chevron-right"></div>
+            </ons-list-item>
+            <ons-list-header class="item-header">
+              Pria
+            </ons-list-header>
+            <ons-list-item onclick="fn.load('pria.html')" tappable>
+              Pakaian
+              <div class="right ion-chevron-right"></div>
+            </ons-list-item>
+            <ons-list-item onclick="fn.load('pria.html')" tappable>
+              Sepatu
+              <div class="right ion-chevron-right"></div>
+            </ons-list-item>
+            <ons-list-item onclick="fn.load('pria.html')" tappable>
+              Aksesoris
+              <div class="right ion-chevron-right"></div>
+            </ons-list-item>
+            <ons-list-item onclick="fn.load('pria.html')" tappable>
+              Jam Tangan
+              <div class="right ion-chevron-right"></div>
+            </ons-list-item>
+            <ons-list-header class="item-header">
+              Anak
+            </ons-list-header>
+            <ons-list-item onclick="fn.load('anak.html')" tappable>
+              Pakaian
+              <div class="right ion-chevron-right"></div>
+            </ons-list-item> -->
+            
+            
+          </ons-list>
+        </ons-page>
+      </ons-splitter-side>
+      <ons-splitter-content id="content" page="home.html"></ons-splitter-content>
+    </ons-splitter>
+
+    <ons-template id="home.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button onclick="fn.open()">
+              <ons-icon icon="md-menu"></ons-icon>
+            </ons-toolbar-button>
+            
+          </div>
+          <div class="center" style="width:33%;">
+            <img src="img/logo_revo.png" style="width:100%; display: inline-block; margin:0 auto">
+          </div>
+          <div class="right">
+            <ons-toolbar-button onclick="fn.load('pria.html')">
+              <ons-icon icon="ion-search"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button onclick="fn.load('pria.html')">
+              <ons-icon icon="ion-heart"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button onclick="fn.load('cart.html')">
+              <ons-icon icon="ion-ios-cart"><span style="margin-left:-5px;" class="badge">3</span></ons-icon>
+            </ons-toolbar-button>
+          </div>
+
+
+        </ons-toolbar>
+        
+        <div>
+          <img src="img/a.jpg" style="width: 100%;">
+        </div>
+
+        <!-- <div>
+          <img src="img/g-line.png" style="width: 90%; margin-left: 5%; margin-right: 5%; margin-bottom:3em;">
+        </div> -->
+
+
+        <!-- <ons-carousel swipeable overscrollable auto-scroll fullscreen id="myC">
+          <ons-carousel-item style="background-color: gray;">
+            <div class="item-label">GRAY
+            <ons-button onclick="setIndex()">Click Me</ons-button></div>
+          </ons-carousel-item>
+          <ons-carousel-item style="background-color: #085078;">
+            <div class="item-label">BLUE</div>
+          </ons-carousel-item>
+          <ons-carousel-item style="background-color: #373B44;">
+            <div class="item-label">DARK</div>
+          </ons-carousel-item>
+          <ons-carousel-item style="background-color: #D38312;">
+            <div class="item-label">ORANGE</div>
+          </ons-carousel-item>
+          <ons-carousel-cover>
+            <div class="cover-label">Swipe left or right</div>
+          </ons-carousel-cover>
+        </ons-carousel> -->
+        <ons-carousel swipeable style="height: 130px;" overscrollable auto-scroll item-width="140px">
+          <ons-carousel-item ng-repeat="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]">
+            <div style="background-color: #ccc; height: 140px; width:140px; ">
+              <img class="img-carousel-home" src="img/b.jpg">
+            </div>
+          </ons-carousel-item>
+          <ons-carousel-item ng-repeat="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]">
+            <div style="background-color: #ccc; height: 140px; width:140px;">
+              <img src="img/c.jpg">
+            </div>
+          </ons-carousel-item>
+          <ons-carousel-item ng-repeat="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]">
+            <div style="background-color: #ccc; height: 140px; width:140px;">
+              <img src="img/d.jpg">
+            </div>
+          </ons-carousel-item>
+          <ons-carousel-item ng-repeat="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]">
+            <div style="background-color: #ccc; height: 140px; width:140px;">
+              <img src="img/z.jpg">
+            </div>
+          </ons-carousel-item>
+          <ons-carousel-item ng-repeat="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]">
+            <div style="background-color: #ccc; height: 140px; width:140px;">
+              <img src="img/c.jpg">
+            </div>
+          </ons-carousel-item>
+        </ons-carousel>
+        <!-- <ons-carousel style=" height: 200px; width: 100%" swipeable overscrollable auto-scroll>
+          <ons-carousel-item>
+             <ons-button style="padding:0px;" id="push-button-third" onclick="fn.load('pria.html')"><img src="img/a1.jpg"></ons-button>
+          </ons-carousel-item>
+          <ons-carousel-item>
+             <ons-button style="padding:0px;" id="push-button-third" onclick="fn.load('pria.html')"><img src="img/a.jpg"></ons-button>
+          </ons-carousel-item>
+        </ons-carousel> -->
+      
+      
+        <div class="col-xs-6" style="padding:0px;">
+            <img style="width:100%;" src="img/y.jpg">          
+        </div>
+        
+        <div class="col-xs-6" style="padding:0px;">
+          <img style="width:100%;" src="img/x.jpg">  
+        </div>
+        <div class="col-xs-12" style="padding:0px;">
+          <ons-button style=" width:100%;background-color:transparent; padding:0px; " id="push-button-third" onclick="fn.load('pria.html')"><img style="width:100%;" src="img/sale.jpg">  
+          </ons-button>
+        </div>         
+      </ons-page>
+    </ons-template>
+
+    <ons-template id="wanita.html">
+      <ons-page>
+
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button onclick="fn.open()">
+              <ons-icon icon="md-menu"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">
+              Wanita            
+          </div>
+          <div class="right">
+            <ons-toolbar-button onclick="fn.load('pria.html')">
+              <ons-icon icon="ion-search"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button onclick="fn.load('pria.html')">
+              <ons-icon icon="ion-heart"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button onclick="fn.load('cart.html')">
+              <ons-icon icon="ion-ios-cart"><span style="margin-left:-5px;" class="badge">3</span></ons-icon>
+            </ons-toolbar-button>
+          </div>
+        </ons-toolbar>
+        
+        <ons-row>
+            <ons-col style="text-align:center;">
+            <h4>Product</h4>
+            <hr style="width:80%;margin-top:0px; margin-bottom:10px;">
+            </ons-col>
+        </ons-row>
+        <div id="product">
+        <!-- <div class="col-xs-6" style="padding:0px;">
+            <ons-button class="item-set" onclick="fn.load('detail.html')">
+                <div class="sub-item-image">
+                  <img style="width:100%;" src="img/nike1.jpg">
+                </div>   
+                <div class="sub-item-detail">
+                  <p>Nike Style Clear</p>
+                  <p>Nike</p>
+                  <p class="ion-pricetag"><bold> Rp 120.000,-</bold></p>
+                </div>
+            </ons-button>        
+        </div>
+        
+        <div class="col-xs-6" style="padding:0px;">
+            <ons-button class="item-set" onclick="fn.load('detail.html')">
+                <div class="sub-item-image">
+                  <img style="width:100%;" src="img/nike2.jpg">
+                </div>   
+                <div class="sub-item-detail">
+                  <p>Nike Style Clear</p>
+                  <p>Nike</p>
+                  <p class="ion-pricetag"><bold> Rp 120.000,-</bold></p>
+                </div>
+            </ons-button>        
+        </div>
+        <div class="col-xs-6" style="padding:0px;">
+            <ons-button class="item-set" onclick="fn.load('detail.html')">
+                <div class="sub-item-image">
+                  <img style="width:100%;" src="img/nike3.jpg">
+                </div>   
+                <div class="sub-item-detail">
+                  <p>Nike Style Clear</p>
+                  <p>Nike</p>
+                  <p class="ion-pricetag"><bold> Rp 120.000,-</bold></p>
+                </div>   
+            </ons-button>     
+        </div>
+        
+        <div class="col-xs-6" style="padding:0px;">
+            <ons-button class="item-set" onclick="fn.load('detail.html')">
+                <div class="sub-item-image">
+                  <img style="width:100%;" src="img/nike4.jpg">
+                </div>   
+                <div class="sub-item-detail">
+                  <p>Nike Style Clear</p>
+                  <p>Nike</p>
+                  <p class="ion-pricetag"><bold> Rp 120.000,-</bold></p>
+                  
+                </div>      
+            </ons-button>  
+        </div>
+        <div class="col-xs-6" style="padding:0px;">
+            <ons-button class="item-set" onclick="fn.load('detail.html')">
+                <div class="sub-item-image">
+                  <img style="width:100%;" src="img/nike5.jpg">
+                </div>   
+                <div class="sub-item-detail">
+                  <p>Nike Style Clear</p>
+                  <p>Nike</p>
+                  <p class="ion-pricetag"><bold> Rp 120.000,-</bold></p>
+                  
+                </div>     
+            </ons-button>  
+        </div>
+        
+        <div class="col-xs-6" style="padding:0px;">
+            <ons-button class="item-set" onclick="fn.load('detail.html')">
+                <div class="sub-item-image">
+                  <img style="width:100%;" src="img/nike6.jpg">
+                </div>   
+                <div class="sub-item-detail">
+                  <p>Nike Style Clear</p>
+                  <p>Nike</p>
+                  <p class="ion-pricetag"><bold> Rp 120.000,-</bold></p>
+                  
+                </div>  
+            </ons-button>      
+        </div>
+        
+        <div class="col-xs-6" style="padding:0px;">
+            <ons-button class="item-set" onclick="fn.load('detail.html')">
+                <div class="sub-item-image">
+                  <img style="width:100%;" src="img/nike7.jpg">
+                </div>   
+                <div class="sub-item-detail">
+                  <p>Nike Style Clear</p>
+                  <p>Nike</p>
+                  <p class="ion-pricetag"><bold> Rp 120.000,-</bold></p>
+                  
+                </div> 
+            </ons-button>       
+        </div>
+        
+        <div class="col-xs-6" style="padding:0px;">
+            <ons-button class="item-set" onclick="fn.load('detail.html')">
+                <div class="sub-item-image">
+                  <img style="width:100%;" src="img/nike8.jpg">
+                </div>   
+                <div class="sub-item-detail">
+                  <p>Nike Style Clear</p>
+                  <p>Nike</p>
+                  <p class="ion-pricetag"><bold> Rp 120.000,-</bold></p>
+                  
+                </div> 
+            </ons-button>       
+        </div>
+        <div class="col-xs-6" style="padding:0px;">
+            <ons-button class="item-set" onclick="fn.load('detail.html')"> 
+                <div class="sub-item-image">
+                  <img style="width:100%;" src="img/nike9.jpg">
+                </div>   
+                <div class="sub-item-detail">
+                  <p>Nike Style Clear</p>
+                  <p>Nike</p>
+                  <p class="ion-pricetag"><bold> Rp 120.000,-</bold></p>
+                  
+                </div> 
+            </ons-button>      
+        </div>
+        
+        <div class="col-xs-6" style="padding:0px;">
+            <ons-button class="item-set" onclick="fn.load('detail.html')">
+                <div class="sub-item-image">
+                  <img style="width:100%;" src="img/nike10.jpg">
+                </div>   
+                <div class="sub-item-detail">
+                  <p>Nike Style Clear</p>
+                  <p>Nike</p>
+                  <p class="ion-pricetag"><bold> Rp 120.000,-</bold></p>
+                  
+                </div>   
+            </ons-button>         
+        </div> -->
+        </div>
+
+
+
+        
+      </ons-page>
+    </ons-template>
+
+    <ons-template id="detail.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button onclick="fn.load('wanita.html')">
+              <ons-icon icon="ion-arrow-left-c"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">
+            Detail
+          </div>
+          <div class="right">
+            <ons-toolbar-button onclick="fn.load('pria.html')">
+              <ons-icon icon="ion-search"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button onclick="fn.load('pria.html')">
+              <ons-icon icon="ion-heart"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button onclick="fn.load('cart.html')">
+              <ons-icon icon="ion-ios-cart"><span style="margin-left:-5px;" class="badge">3</span></ons-icon>
+            </ons-toolbar-button>
+          </div>
+        </ons-toolbar>
+        
+        <ons-carousel style=" margin-top:10px; margin-bottom:20px;height: 60%; width: 100%" swipeable overscrollable auto-scroll>
+          <ons-carousel-item>
+              <img class="detail-item-image" src="img/lazada1.jpg">
+          </ons-carousel-item>
+          <ons-carousel-item>
+              <img class="detail-item-image" src="img/lazada2.jpg">
+          </ons-carousel-item>
+          <ons-carousel-item>
+              <img class="detail-item-image" src="img/lazada3.jpg">
+          </ons-carousel-item>
+          <ons-carousel-item>
+              <img class="detail-item-image" src="img/lazada4.jpg">
+          </ons-carousel-item>
+          <ons-carousel-cover>
+            <div class="cover-label">
+              <span class="indicators ion-record"><span>
+              <span class="indicators ion-record"></span>
+              <span class="indicators ion-record"></span>
+              <span class="indicators ion-record"></span>
+            </div>
+          </ons-carousel-cover>
+        </ons-carousel>
+        
+        <!-- <ons-carousel style=" height: 65%; width: 100%" swipeable overscrollable auto-scroll>
+          <ons-carousel-item>
+              <div id="gambar00"></div>
+              <img class="detail-item-image" src="img/lazada1.jpg">
+          </ons-carousel-item>
+          <ons-carousel-item>
+              <div id="gambar01"></div>
+              <img class="detail-item-image" src="img/lazada2.jpg">
+          </ons-carousel-item>
+          <ons-carousel-item>
+             <div id="gambar02"></div>
+              <img class="detail-item-image" src="img/lazada3.jpg">
+          </ons-carousel-item>
+          <ons-carousel-item>
+              <div id="gambar03"></div>
+              <img class="detail-item-image" src="img/lazada4.jpg">
+          </ons-carousel-item>
+        </ons-carousel> -->
+        <!-- <section style="position:relative;height: 65%; width: 100%" class="col-xs-12">
+            <ul id="image-kos" class="cS-hidden" style="margin-bottom:0px;">
+              <li data-thumb="img/lazada1.jpg"> 
+                  <img src="img/lazada1.jpg">
+              </li>
+              <li data-thumb="img/lazada2.jpg"> 
+                  <img src="img/lazada2.jpg">
+              </li>
+              <li data-thumb="img/lazada3.jpg"> 
+                  <img src="img/lazada3.jpg">
+              </li>
+              <li data-thumb="img/lazada4.jpg"> 
+                  <img src="img/lazada4.jpg">
+              </li>
+            </ul>
+      </section> -->
+      <!-- <div class="demo">
+        <div class="item">            
+            <div class="clearfix">
+                <ul id="image-gallery" class="gallery list-unstyled cS-hidden">
+                    <li data-thumb="img/lazada1.jpg"> 
+                        <img src="img/lazada1.jpg">
+                    </li>
+                    <li data-thumb="img/lazada2.jpg"> 
+                        <img src="img/lazada2.jpg">
+                    </li>
+                    <li data-thumb="img/lazada3.jpg"> 
+                        <img src="img/lazada3.jpg">
+                    </li>
+                    <li data-thumb="img/lazada4.jpg"> 
+                        <img src="img/lazada4.jpg">
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="item">
+            <ul id="content-slider" class="content-slider">
+                <li>
+                    <h3>1</h3>
+                </li>
+                <li>
+                    <h3>2</h3>
+                </li>
+                <li>
+                    <h3>3</h3>
+                </li>
+                
+            </ul>
+        </div>
+
+    </div>   -->
+        <!-- <ul id="lightSlider">
+              <li data-thumb="img/lazada1.jpg"> 
+                  <img src="img/lazada1.jpg">
+              </li>
+              <li data-thumb="img/lazada2.jpg"> 
+                  <img src="img/lazada2.jpg">
+              </li>
+              <li data-thumb="img/lazada3.jpg"> 
+                  <img src="img/lazada3.jpg">
+              </li>
+              <li data-thumb="img/lazada4.jpg"> 
+                  <img src="img/lazada4.jpg">
+              </li>
+        </ul> -->
+        
+                
+        <div class="detail-item col-xs-12">
+            <div class="separated">
+            </div>
+            <div class="detail-sub-item-detail panel panel-default">
+                <h4>Deskripsi Produk</h4>
+                <hr>
+                    <p><b>RIVER ISLAND</b></p>
+                    <p>Leopard Print T-Shirt</p>
+                    <p><b>Rp 120.000,-</b></p>
+                    <br>
+                    <p>River Island kembali mengkombinasikan kesan casually fun lewat koleksi River Island. Leopard Print T-Shirt didesain dengan detail printed. Cocok untuk berakhir pekan.</p>
+                    <p>
+                    - Katun <br>
+                    - Hitam <br>
+                    - Detail Kerah <br>
+                    - <i> Regular Fit</i> <br>
+                    - <i> Unlined </i> <br>
+                    <br>
+                    <p><b>Ukuran pakaian normal, pilih sesuai ukuran Anda biasanya<b></p>
+
+                    <p><b>Colour</b>: White</p>
+                    
+                                  
+            </div> 
+            <div class="detail-sub-item-cart panel panel-default">
+                <ons-row>
+                    <ons-col width="30%" style="display:block; margin:0 auto;">
+                        <p style="margin-bottom:0;"><b>Size</b>:</p>
+                    </ons-col>
+                    <ons-col width="70%">
+                        <div class="dropdown">
+                            <select class="form-control" name="ukuran">
+                              
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                            </select>
+                        </div>
+                    </ons-col>
+                <ons-row>
+                <ons-row style="margin-top:1em;">       
+                    <ons-col class="tombol-center">
+                    <!-- <ons-alert-dialog var="alertDialog">
+                        <div class="alert-dialog-title"><strong style="color: #ff3333">Added to Cart</strong></div>
+                        <div class="alert-dialog-content">
+                        Product Successfully added to your Cart
+                        </div>
+                        <div class="alert-dialog-footer">
+                          <button class="alert-dialog-button" ng-click="alertDialog.hide(); alertDialog.show()">OK</button>
+                        </div>
+                    </ons-alert-dialog> -->
+                        <div class="tombol-center">
+                            <ons-button class="tombol ion-ios-cart-outline" ng-click="alert(true)" modifier="tappable" onclick="fn.load('cart.html')"> Add To Cart</ons-button>
+                        </div>
+                    </ons-col>
+                    <ons-col>
+                        <div class="tombol-center">
+                            <ons-button class="tombol ion-bag" onclick="fn.load('proceed.html')"> Proceed</ons-button>
+                        </div>
+                    </ons-col>
+                </ons-row> 
+            </div>     
+        </div>
+        
+      </ons-page>
+    </ons-template>
+
+
+
+    <ons-template id="pria.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button onclick="fn.open()">
+              <ons-icon icon="md-menu"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">
+            Pria
+          </div>
+          <div class="right">
+            <ons-toolbar-button onclick="fn.load('pria.html')">
+              <ons-icon icon="ion-search"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button onclick="fn.load('pria.html')">
+              <ons-icon icon="ion-heart"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button onclick="fn.load('cart.html')">
+              <ons-icon icon="ion-ios-cart"><span style="margin-left:-5px;" class="badge">3</span></ons-icon>
+            </ons-toolbar-button>
+          </div>
+        </ons-toolbar>
+        <p style="text-align: center; opacity: 0.6; padding-top: 20px;">
+          Ini Halaman Pria
+          <div id="kategori0">
+            
+          </div>
+          <div id="data0">
+            
+          </div>
+          <div id="gambar00">
+            
+          </div>
+          <div id="gambar01">
+            
+          </div>
+          <div id="gambar02">
+            
+          </div>
+          <div id="gambar03">
+            
+          </div>
+          <div id="kategori1">
+            
+          </div>
+          <div id="data1">
+            
+          </div>
+          <div id="gambar10">
+            
+          </div>
+          <div id="gambar11">
+            
+          </div>
+          <div id="gambar12">
+            
+          </div>
+          <div id="gambar13">
+            
+          </div>
+        </p>
+      </ons-page>
+    </ons-template>
+
+    <ons-template id="anak.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button onclick="fn.open()">
+              <ons-icon icon="md-menu"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">
+            Anak
+          </div>
+          <div class="right">
+            <ons-toolbar-button onclick="fn.load('pria.html')">
+              <ons-icon icon="ion-search"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button onclick="fn.load('pria.html')">
+              <ons-icon icon="ion-heart"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button onclick="fn.load('cart.html')">
+              <ons-icon icon="ion-ios-cart"><span style="margin-left:-5px;" class="badge">3</span></ons-icon>
+            </ons-toolbar-button>
+          </div>
+        </ons-toolbar>
+        <p style="text-align: center; opacity: 0.6; padding-top: 20px;">
+          Ini Halaman Anak
+        </p>
+      </ons-page>
+    </ons-template>
+
+    <ons-template id="login.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button onclick="fn.open()">
+              <ons-icon icon="md-menu"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">
+            Login
+          </div>
+        </ons-toolbar>
+        <div style="text-align: center; margin-top: 30px;">
+          <p>
+            <ons-input id="username" modifier="underbar" placeholder="Username" float></ons-input>
+          </p>
+          <p>
+            <ons-input id="password" modifier="underbar" type="password" placeholder="Password" float></ons-input>
+          </p>
+          <p style="margin-top: 30px;">
+            <ons-button onclick="fn.login('home.html')">Sign in</ons-button>
+          </p>
+      </div>
+      </ons-page>
+    </ons-template>
+
+     <ons-template id="cart.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button onclick="fn.load('home.html')">
+              <ons-icon icon="ion-arrow-left-c"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">
+            Cart
+          </div>
+        </ons-toolbar>
+        
+        <div>
+            <div class="cart-item">
+                <div class="sub-cart-item panel panel-default">
+                    <ons-row>
+                        <ons-col class="sub-cart-item-img" width="35%">
+                            <img src="img/lazada2.jpg">
+                        </ons-col>
+                        <ons-col class="quantity" width="20%">
+                            <div class="dropdown">
+                            <label for="spinner">Quantity</label>
+                              <select class="form-control" name="jumlah">
+                                  
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </div>
+                        </ons-col>
+                        <ons-col class="sub-cart-item-detail">
+                            <p><b>RIVER ISLAND</b></p>
+                            <p>Leopard Print T-Shirt</p>
+                            <p><b>Rp 120.000,-</b></p>
+                            <br>
+                            <button onclick="fn.load('home.html')" class="tombol-remove"> <p class="trash ion-trash-b"> Remove</p> </button>
+                        </ons-col>
+                    </ons-row>    
+                </div>
+                <div class="sub-cart-item panel panel-default">
+                    <ons-row>
+                        <ons-col class="sub-cart-item-img" width="35%">
+                            <img src="img/lazada3.jpg">
+                        </ons-col>
+                        <ons-col class="quantity" width="20%">
+                            <div class="dropdown">
+                            <label for="spinner">Quantity</label>
+                              <select class="form-control" name="jumlah">
+                                  
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </div>
+                        </ons-col>
+                        <ons-col class="sub-cart-item-detail">
+                            <p><b>RIVER ISLAND</b></p>
+                            <p>Leopard Print T-Shirt</p>
+                            <p><b>Rp 120.000,-</b></p>
+                            <br>
+                             <button onclick="fn.load('home.html')" class="tombol-remove"> <p class="trash ion-trash-b"> Remove</p> </button>
+                        </ons-col>
+                    </ons-row>    
+                </div>
+                <div class="sub-cart-item panel panel-default">
+                    <ons-row>
+                        <ons-col class="sub-cart-item-img" width="35%">
+                            <img src="img/lazada4.jpg">
+                        </ons-col>
+                        <ons-col class="quantity" width="20%">
+                            <div class="dropdown">
+                            <label for="spinner">Quantity</label>
+                              <select class="form-control" name="jumlah">
+                                  
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </div>
+                        </ons-col>
+                        <ons-col class="sub-cart-item-detail">
+                            <p><b>RIVER ISLAND</b></p>
+                            <p>Leopard Print T-Shirt</p>
+                            <p><b>Rp 120.000,-</b></p>
+                            <br>
+                            <button onclick="fn.load('home.html')" class="tombol-remove"> <p class="trash ion-trash-b"> Remove</p> </button>
+                        </ons-col>
+                    </ons-row>    
+                </div>
+            </div>
+            <div class="process-item">
+                <ons-row>
+                        <ons-col class="sub-process-item">
+                            <ons-button class="tombol ion-ios-cart-outline" onclick="fn.load('proceed.html')"> Proceed</ons-button>
+                        </ons-col>
+                        <ons-col class="sub-process-detail">
+                            <p>Total: <b>Rp 360.000,-</b></p>
+                        </ons-col>
+                    </ons-row>   
+            </div>
+        </div>
+      </ons-page>
+    </ons-template>
+
+    <ons-template id="proceed.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button onclick="fn.load('cart.html')">
+              <ons-icon icon="ion-arrow-left-c"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">
+            Biodata Penerima
+          </div>
+        </ons-toolbar>
+        <div class="row bs-wizard" style="border-bottom:0;">
+                
+                <div class="col-xs-3 bs-wizard-step active">
+                  <div class="text-center bs-wizard-stepnum">Step 1</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Data Diri</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+                  <div class="text-center bs-wizard-stepnum">Step 2</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Metode Pembayaran</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+                  <div class="text-center bs-wizard-stepnum">Step 3</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Ringkasan</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step disabled"><!-- active -->
+                  <div class="text-center bs-wizard-stepnum">Step 4</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Konfirmasi</div>
+                </div>
+        </div>
+        <div>
+        <form class="process panel panel-default">
+        <h4>Biodata Pemesan</h4>
+        <hr>
+            <div class="form-group">
+                <label for="nama">Nama</label>
+                <input type="text" class="form-control" id="nama" placeholder="Nama">
+            </div>
+            <div class="form-group">
+                <label for="nomor">Nomor HP</label>
+                <input type="number" class="form-control" id="nomor" placeholder="Nomor HP">
+            </div>
+            <div class="form-group">
+                <label for="alamat">Alamat Lengkap</label>
+                <input type="text" class="form-control" id="alamat" placeholder="Alamat Lengkap">
+            </div>
+            <div class="form-group">
+                <label for="provinsi">Provinsi</label>
+                <div class="dropdown">
+                            <select class="form-control" id="provinsi" name="Provinsi">
+                                <option value="bali">Bali</option>
+                                <option value="bangka">Bangka Belitung</option>
+                                <option value="banten">Banten</option>
+                                <option value="bengkulu">Bengkulu</option>
+                                <option value="yogyakarta">DI Yogyakarta</option>
+                                <option value="jakarta ">DKI Jakarta</option>
+                                <option value="golontalo">Golontalo</option>
+                                <option value="jambi">Jambi</option>
+                                <option value="jawabarat">Jawa Barat</option>
+                                <option value="jawatengah">Jawa Tengah</option>
+                                <option value="jawatimur">Jawa Timur</option>
+                                <option value="kalimantanbarat">Kalimantan Barat</option>
+                                <option value="kalimantanselatan">Kalimantan Selatan</option>
+                                <option value="kalimantantengah">Kalimantan Tengah</option>
+                                <option value="kalimantantimur">Kalimantan Timur</option>
+                                <option value="kalimantanutara">Kalimantan Utara</option>
+                                <option value="kepulauanriau">Kepulauan Riau</option>
+                                <option value="lampung">Lampung</option>
+                                <option value="maluku">Maluku</option>
+                                <option value="malukuutara">Maluku Utara</option>
+                                <option value="aceh">Nanggroe Aceh Darussalam</option>
+                                <option value="ntb">Nusa Tenggara Barat</option>
+                                <option value="ntt">Nusa Tenggara Timur</option>
+                                <option value="papua">Papua</option>
+                                <option value="papuabarat">Papua Barat</option>
+                                <option value="riau">Riau</option>
+                                <option value="sulawesibarat">Sulawesi Barat</option>
+                                <option value="sulawesiselatan">Sulawesi Selatan</option>
+                                <option value="sulawesitengah">Sulawesi Tengah</option>
+                                <option value="sulawesitenggara">Sulawesi Tenggara</option>
+                                <option value="sulawesiutara">Sulawesi Utara</option>
+                                <option value="sumaterabarat">Sumatera Barat</option>
+                                <option value="sumateraselatan">Sumatera Selatan</option>
+                                <option value="sumaterautara">Sumatera Utara</option>
+                            </select>
+                </div>
+                
+            </div>
+        <hr>
+        <ons-button modifier="large" onclick="fn.load('pembayaran.html')">Lanjutkan</ons-button>
+          
+        </form>
+        </div>
+      </ons-page>
+    </ons-template>
+
+    <ons-template id="pembayaran.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button onclick="fn.load('proceed.html')">
+              <ons-icon icon="ion-arrow-left-c"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">
+            Pembayaran
+          </div>
+        </ons-toolbar>
+        <div class="row bs-wizard" style="border-bottom:0;">
+                
+                <div class="col-xs-3 bs-wizard-step complete">
+                  <div class="text-center bs-wizard-stepnum">Step 1</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Data Diri</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step active"><!-- complete -->
+                  <div class="text-center bs-wizard-stepnum">Step 2</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Metode Pembayaran</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+                  <div class="text-center bs-wizard-stepnum">Step 3</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Ringkasan</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step disabled"><!-- active -->
+                  <div class="text-center bs-wizard-stepnum">Step 4</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Konfirmasi</div>
+                </div>
+        </div>
+        <div>
+        <form class="process panel panel-default">
+        <h4>Metode Pembayaran</h4>
+        <hr>
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+              <div class="panel panel-default">
+                <a class="collapsed panel-title" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <div class="heading-panel panel-heading" role="tab" id="headingOne">
+                      <h4 class="panel-title">
+                          Transfer Bank
+                      </h4>
+                    </div>
+                </a>
+                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                  <div class="panel-body">
+                      <ons-row width="100%">
+                          <ons-col style="text-align:left;" width="70%">
+                              Biaya Transaksi
+                          </ons-col>
+                              
+                          <ons-col style="text-align:right;" width="30%">
+                              Rp 39.900
+                          </ons-col>
+                      </ons-row>
+                      <ons-row width="100%">
+                          <ons-col style="text-align:left;" width="70%">
+                              Biaya Kurir
+                          </ons-col>
+                          <ons-col style="text-align:right;" width="30%">
+                              Rp 15.000
+                          </ons-col>
+                      </ons-row>
+                      <ons-row width="100%">
+                          <ons-col style="text-align:left;" width="70%">
+                              Total Belanja
+                          </ons-col>
+                          <ons-col style="text-align:right;" width="30%">
+                              <b>Rp 54.900</b>
+                          </ons-col>
+                      </ons-row>
+                      <ons-row style="margin-top:1em;">
+                          <ons-col class="panel panel-default bank-cart" style="text-align:center;" width="45%">
+                              <img src="img/mandiri.png" class="img-bank">
+                              <h6><b>Bank Mandiri</b></h6>
+                              <p> Cabang Citraland <br>
+                                  165 003 0073122 <br>
+                                  a/n Myme International</p>
+                          </ons-col>
+                          <ons-col class="panel panel-default bank-cart" style="text-align:center; margin-top: 0px;" width="45%">
+                              <img src="img/bca.png" class="img-bank">
+                              <h6><b>Bank BCA</b></h6>
+                              <p> Cabang Citraland <br>
+                                  372 178 5061 <br>
+                                  a/n Myme International</p>
+                          </ons-col>
+                          
+                      </ons-row>
+                      <ons-row style="margin-top:1em;">
+                          <ons-col class="panel panel-default bank-cart" style="text-align:center; margin-top: 0px;" width="45%">
+                              <img src="img/bni.png" class="img-bank">
+                              <h6><b>Bank BNI</b></h6>
+                              <p> Cabang Lontar <br>
+                                  800 600 6007 <br>
+                                  a/n Myme International</p>
+                          </ons-col>
+                          <ons-col class="panel panel-default bank-cart" style="text-align:center; margin-top: 0px;" width="45%">
+                              <img src="img/bri.png" class="img-bank">
+                              <h6><b>Bank BRI</b></h6>
+                              <p> Cabang G-walk <br>
+                                  037 701 000435302 <br>
+                                  a/n Myme International</p>
+                          </ons-col>
+                      </ons-row>
+                        
+
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel panel-default">
+                <a class="collapsed panel-title" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    <div class="heading-panel panel-heading" role="tab" id="headingTwo">
+                      <h4 class="panel-title">
+                        
+                          Mandiri Clickpay
+                        
+                      </h4>
+                    </div>
+                </a>
+                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                  <div class="panel-body">
+                      <ons-row width="100%">
+                          <ons-col style="text-align:left;" width="70%">
+                              Biaya Transaksi
+                          </ons-col>
+                              
+                          <ons-col style="text-align:right;" width="30%">
+                              Rp 39.900
+                          </ons-col>
+                      </ons-row>
+                      <ons-row width="100%">
+                          <ons-col style="text-align:left;" width="70%">
+                              Biaya Kurir
+                          </ons-col>
+                          <ons-col style="text-align:right;" width="30%">
+                              Rp 15.000
+                          </ons-col>
+                      </ons-row>
+                      <ons-row width="100%">
+                          <ons-col style="text-align:left;" width="70%">
+                              Total Belanja
+                          </ons-col>
+                          <ons-col style="text-align:right;" width="30%">
+                              <b>Rp 54.900</b>
+                          </ons-col>
+                      </ons-row>
+                      <ons-row style="margin-top:1em;">
+                          <ons-col class="panel panel-default bank-cart" style="text-align:center;" width="45%">
+                              <img src="img/mandiri.png" class="img-bank">
+                              <h6><b>Bank Mandiri</b></h6>
+                              <p> Cabang Citraland <br>
+                                  165 003 0073122 <br>
+                                  a/n Myme International</p>
+                          </ons-col>
+                          <ons-col class="panel panel-default bank-cart" style="text-align:center; margin-top: 0px;" width="45%">
+                              <img src="img/bca.png" class="img-bank">
+                              <h6><b>Bank BCA</b></h6>
+                              <p> Cabang Citraland <br>
+                                  372 178 5061 <br>
+                                  a/n Myme International</p>
+                          </ons-col>
+                          
+                      </ons-row>
+                      <ons-row style="margin-top:1em;">
+                          <ons-col class="panel panel-default bank-cart" style="text-align:center; margin-top: 0px;" width="45%">
+                              <img src="img/bni.png" class="img-bank">
+                              <h6><b>Bank BNI</b></h6>
+                              <p> Cabang Lontar <br>
+                                  800 600 6007 <br>
+                                  a/n Myme International</p>
+                          </ons-col>
+                          <ons-col class="panel panel-default bank-cart" style="text-align:center; margin-top: 0px;" width="45%">
+                              <img src="img/bri.png" class="img-bank">
+                              <h6><b>Bank BRI</b></h6>
+                              <p> Cabang G-walk <br>
+                                  037 701 000435302 <br>
+                                  a/n Myme International</p>
+                          </ons-col>
+                      </ons-row>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel panel-default">
+                <a class="collapsed panel-title" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    <div class="heading-panel panel-heading" role="tab" id="headingThree">
+                      <h4 class="panel-title">
+                          Veri Trans
+                      </h4>
+                    </div>
+                </a>
+                <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                  <div class="panel-body">
+                      <ons-row width="100%">
+                          <ons-col style="text-align:left;" width="70%">
+                              Biaya Transaksi
+                          </ons-col>
+                              
+                          <ons-col style="text-align:right;" width="30%">
+                              Rp 39.900
+                          </ons-col>
+                      </ons-row>
+                      <ons-row width="100%">
+                          <ons-col style="text-align:left;" width="70%">
+                              Biaya Kurir
+                          </ons-col>
+                          <ons-col style="text-align:right;" width="30%">
+                              Rp 15.000
+                          </ons-col>
+                      </ons-row>
+                      <ons-row width="100%">
+                          <ons-col style="text-align:left;" width="70%">
+                              Total Belanja
+                          </ons-col>
+                          <ons-col style="text-align:right;" width="30%">
+                              <b>Rp 54.900</b>
+                          </ons-col>
+                      </ons-row>
+                      <ons-row style="margin-top:1em;">
+                          <ons-col class="panel panel-default bank-cart" style="text-align:center;" width="45%">
+                              <img src="img/mandiri.png" class="img-bank">
+                              <h6><b>Bank Mandiri</b></h6>
+                              <p> Cabang Citraland <br>
+                                  165 003 0073122 <br>
+                                  a/n Myme International</p>
+                          </ons-col>
+                          <ons-col class="panel panel-default bank-cart" style="text-align:center; margin-top: 0px;" width="45%">
+                              <img src="img/bca.png" class="img-bank">
+                              <h6><b>Bank BCA</b></h6>
+                              <p> Cabang Citraland <br>
+                                  372 178 5061 <br>
+                                  a/n Myme International</p>
+                          </ons-col>
+                          
+                      </ons-row>
+                      <ons-row style="margin-top:1em;">
+                          <ons-col class="panel panel-default bank-cart" style="text-align:center; margin-top: 0px;" width="45%">
+                              <img src="img/bni.png" class="img-bank">
+                              <h6><b>Bank BNI</b></h6>
+                              <p> Cabang Lontar <br>
+                                  800 600 6007 <br>
+                                  a/n Myme International</p>
+                          </ons-col>
+                          <ons-col class="panel panel-default bank-cart" style="text-align:center; margin-top: 0px;" width="45%">
+                              <img src="img/bri.png" class="img-bank">
+                              <h6><b>Bank BRI</b></h6>
+                              <p> Cabang G-walk <br>
+                                  037 701 000435302 <br>
+                                  a/n Myme International</p>
+                          </ons-col>
+                      </ons-row>
+                        
+
+                  </div>
+                </div>
+              </div>
+            </div>
+<!-- 
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingOne">
+                  <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                      Transfer Bank
+                    </a>
+                  </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                  <div class="panel-body">
+                    blablabla
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingTwo">
+                  <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                      Mandiri Clickpay
+                    </a>
+                  </h4>
+                </div>
+                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                  <div class="panel-body">
+                      blablabla
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingThree">
+                  <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                      Mandiri E-Cash
+                    </a>
+                  </h4>
+                </div>
+                <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                  <div class="panel-body">
+                    blablabla
+                  </div>
+                </div>
+              </div>
+            </div> -->
+            
+        <hr>
+        <ons-button modifier="large" onclick="fn.load('summary.html')">Lanjutkan</ons-button>
+          
+        </form>
+        </div>
+      </ons-page>
+    </ons-template>
+
+    <ons-template id="summary.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button onclick="fn.load('pembayaran.html')">
+              <ons-icon icon="ion-arrow-left-c"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">
+            Ringkasan Transaksi
+          </div>
+        </ons-toolbar>
+        <div class="row bs-wizard" style="border-bottom:0;">
+                
+                <div class="col-xs-3 bs-wizard-step complete">
+                  <div class="text-center bs-wizard-stepnum">Step 1</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Data Diri</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step complete"><!-- complete -->
+                  <div class="text-center bs-wizard-stepnum">Step 2</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Metode Pembayaran</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step active"><!-- complete -->
+                  <div class="text-center bs-wizard-stepnum">Step 3</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Ringkasan</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step disabled"><!-- active -->
+                  <div class="text-center bs-wizard-stepnum">Step 4</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Konfirmasi</div>
+                </div>
+        </div>
+        <div>
+            <hr>
+            <ons-button modifier="large" onclick="fn.load('checkout.html')">Check Out</ons-button>
+        
+        </div>
+      </ons-page>
+    </ons-template>
+
+    <ons-template id="checkout.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button onclick="fn.load('pembayaran.html')">
+              <ons-icon icon="ion-arrow-left-c"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">
+            Konfirmasi Pembayaran
+          </div>
+        </ons-toolbar>
+        <div class="row bs-wizard" style="border-bottom:0;">
+                
+                <div class="col-xs-3 bs-wizard-step complete">
+                  <div class="text-center bs-wizard-stepnum">Step 1</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Data Diri</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step complete"><!-- complete -->
+                  <div class="text-center bs-wizard-stepnum">Step 2</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Metode Pembayaran</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step complete"><!-- complete -->
+                  <div class="text-center bs-wizard-stepnum">Step 3</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Ringkasan</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step active"><!-- active -->
+                  <div class="text-center bs-wizard-stepnum">Step 4</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Konfirmasi</div>
+                </div>
+        </div>
+        <div>
+            <hr>
+            <ons-button modifier="large" onclick="fn.load('home.html')">home</ons-button>
+        
+        </div>
+      </ons-page>
+    </ons-template>
+
+
+
+
+
+  </body>
+</html>

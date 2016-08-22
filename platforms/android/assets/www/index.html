@@ -1,0 +1,3756 @@
+  <!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" href="lib/onsenui/css/onsenui.css"/>
+        <link rel="stylesheet" href="lib/onsenui/css/ionicons/css/ionicons.css"/>
+        <link rel="stylesheet" href="lib/onsenui/css/onsen-css-components.css"/>
+        <link rel="stylesheet" href="lib/onsenui/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="lib/onsenui/css/jquery-ui.min.css"/>
+        <link rel="stylesheet" href="lib/onsenui/css/lightslider.min.css"/>
+        
+        <!-- 
+        <script type="text/javascript" src="js/cordova.js"></script>
+        <script type="text/javascript" src="js/cordova_plugin.js"></script> -->
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="lib/onsenui/js/onsenui.js"></script>
+        <script type="text/javascript" src="lib/onsenui/js/jquery-1.11.3.min.js"></script>
+        <script type="text/javascript" src="lib/onsenui/js/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="lib/onsenui/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="lib/onsenui/js/lightslider.min.js"></script>
+        <script type="text/javascript" src="js/notify.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+        <!-- <script src="lib/onsenui/js/angular-onsenui.min.js"></script> -->
+        <title>HOME | Revo</title>
+ 
+
+
+    <script>
+      $( function() {
+        var spinner = $( "#spinner" ).spinner();
+     } );
+  </script>
+  <script>
+
+          var prev = function() {
+            var carousel = document.getElementById('carousel');
+            carousel.prev();            
+          };
+
+          var next = function() {
+            var carousel = document.getElementById('carousel');
+            carousel.next();            
+          };
+
+          var showDialog = function(id, customer) {
+            document.getElementById(id).show();
+
+            var checkout_ok_button            = document.getElementById('checkout_ok_button');
+            checkout_ok_button.setAttribute('onclick', "fn.load('checkout.html' , "+JSON.stringify(customer)+")");
+          };
+
+          var hideDialog = function(id) {
+            document.getElementById(id).hide();
+          };
+
+
+          var check_menu = false;
+          var check_produk = false;
+          var storage = window.localStorage;
+
+          ons.ready(function() {
+            window.fn = {};
+
+            window.fn.open = function() {
+              var menu = document.getElementById('menu');
+              var result;
+
+              // storage.clear();
+
+              if(storage.getItem("menu") == null)
+              {
+                console.log("adadada");
+                storage = window.localStorage;
+
+                var data = {
+                  "action": "test1"
+                };
+
+                var url = 'http://revo.webmurahbagus.com/woocommerce-mobile/server/test.php';
+                var xhr = new XMLHttpRequest();
+                if ("withCredentials" in xhr){
+                  xhr.open("GET", url, true);
+                } else if (typeof XDomainRequest != "undefined"){
+                  xhr = new XDomainRequest();
+                  xhr.open(method, url);
+                } else {
+                  xhr = null;
+                }
+
+                xhr.setRequestHeader(
+                  'X-Requested-With', 'XMLHttpRequest');
+                xhr.send();
+
+                data = $(this).serialize() + "&" + $.param(data);
+                $.ajax
+                ({
+                    url: url, //Relative or absolute path to response.php file
+                    type: "GET",
+                    crossDomain: true,
+                    data: data,
+                    dataType: "json", 
+                    async: false,
+
+                    success: function(data) {
+                      if(data != "" && data != null)
+                      {
+                        console.log(data);
+                          storage.setItem("menu", JSON.stringify(data));
+                          status = true;
+                      }
+                    },
+                    error: function( jqXhr, textStatus, errorThrown ) {
+                        console.log( errorThrown );
+                    } 
+                });
+              }
+              if(storage.getItem("menu") != null && !check_menu)
+              {
+                var value = JSON.parse(storage.getItem("menu"));
+                var categories = value["menu_categories"];
+
+                for (var i = 0; i < categories.length; i++) {
+                  //PARENT CATEGORIES
+
+                  //Buat header
+                  var ons_header              = document.createElement('ons-list-header');
+                  ons_header.style.fontSize   = "11px";
+                  ons_header.setAttribute("tappable",'');
+                  ons_header.setAttribute("class",'item-header list__header');
+
+                  document.getElementsByTagName('ons-list')[0].appendChild(ons_header);
+
+                  //Buat DIV
+                  var div                     = document.createElement('div');
+                  ons_header.appendChild(div);
+
+                  //Buat a href biar bisa ditekan Xd LOL
+                  var a                       = document.createElement('a');
+                  a.setAttribute("class",'collapsed panel-title');
+                  a.setAttribute("role",'button');
+                  a.setAttribute("data-toggle",'collapse');
+                  a.setAttribute("data-parent",'#accordions');
+                  a.setAttribute("href",'#collapse'+i);
+                  a.setAttribute("aria-expanded",'false');
+                  a.setAttribute("aria-controls",'collapse'+i);
+                  div.appendChild(a);
+
+                  //Buat DIV baru
+                  var div_categories          = document.createElement('div');
+                  div_categories.setAttribute("id",'headings'+i);
+                  div_categories.setAttribute("role",'tab');
+                  div_categories.innerHTML    = categories[i]["name"];
+                  a.appendChild(div_categories);
+
+                  //CHILD CATEGORIES
+
+                  //Buat DIV penampung
+                  var div_subcategories       = document.createElement('div');
+                  var div_child               = document.createElement('div');
+
+                  div_subcategories.setAttribute("id",'collapse'+i);
+                  div_subcategories.setAttribute("class",'panel-collapse collapses collapse');
+                  div_subcategories.setAttribute("role",'tabpanel');
+                  div_subcategories.setAttribute("aria-labelledby",'heading'+i);
+                  div_subcategories.appendChild(div_child);
+
+                  div.appendChild(div_subcategories);
+
+                  subcategories = categories[i]["sub_categories"];
+
+                  for (var j = 0; j < subcategories.length; j++) {
+                    var arr = {slug:subcategories[j]["slug"], name:subcategories[j]["name"]};
+
+                    var ons_list_item           = document.createElement('ons-list-item');
+                    ons_list_item.setAttribute("onclick","fn.load('wanita.html','"+JSON.stringify(arr)+"','"+true+"')");
+                    ons_list_item.setAttribute("tappable",'');
+                    ons_list_item.setAttribute("class",'list-item list__item');
+                    ons_list_item.innerHTML     = subcategories[j]["name"];
+
+                    var div_anotherdiv          = document.createElement('div');
+                    div_anotherdiv.setAttribute("class",'right ion-chevron-right');
+                    ons_list_item.appendChild(div_anotherdiv);
+
+                    div_subcategories.appendChild(ons_list_item);
+                  }
+                }
+                check_menu = true;
+              }
+              menu.open();
+              // storage.removeItem("proceed");
+            };
+             
+            var carousel = document.addEventListener('postchange', function(event) {
+                console.log('Changed to ' + event.activeIndex);
+                document.querySelectorAll('.indicators')[event.lastActiveIndex].style.color = 'white';
+                document.querySelectorAll('.indicators')[event.activeIndex].style.color = '#085078';
+              });
+
+            window.fn.load = function(page, newdata, cek) {
+                var status = false;
+                var result;
+                // console.log(storage.getItem("menu"));
+
+                if(page == "register.html")
+                {
+                  var content = document.getElementById('content');
+                  var menu    = document.getElementById('menu');
+                  content.load(page)
+                    .then(menu.close.bind(menu));
+                }
+                else if(page == "home.html")
+                {
+                  var content = document.getElementById('content');
+                  var menu    = document.getElementById('menu');
+                  content.load(page)
+                    .then(menu.close.bind(menu));
+
+                  setTimeout(function(){
+                    var cart = JSON.parse(storage.getItem("cart"));
+                    if(cart != null)
+                    {
+                      var cart_length = cart.length;
+                      storage.setItem("cart", JSON.stringify(cart));
+
+                      var icon = document.getElementById("cart_icon3");
+                      icon.innerHTML = cart_length;
+                    }
+                  }, 10);
+                }
+                else if(page == "akun.html")
+                {
+                  var content = document.getElementById('content');
+                  var menu    = document.getElementById('menu');
+                  content.load(page)
+                    .then(menu.close.bind(menu));
+                }
+                else if(page == "proceed.html")
+                {
+                  var content = document.getElementById('content');
+                  var menu    = document.getElementById('menu');
+                  content.load(page)
+                    .then(menu.close.bind(menu));
+
+                  // setTimeout(function() {
+                  //   var ons_toolbar               = document.getElementById('back_button_proceed');
+                  //   if(cek == "true")
+                  //   {
+                  //     ons_toolbar.setAttribute("onclick","fn.load('wanita.html')");
+                  //   }
+                  //   else
+                  //   {
+                  //     ons_toolbar.setAttribute("onclick","fn.load('cart.html')");
+                  //   }
+                  // }, 10);
+                  // console.log(cek);
+                }
+                else if(page == "wanita.html")
+                {
+                  if(cek == "true")
+                  {
+                    storage.removeItem("all_produk");
+                  }
+                  if(storage.getItem("all_produk") == null)
+                  {
+                    var data = {
+                      "action": "single_produk",
+                      "slug"  : JSON.parse(newdata)["slug"],
+                    };
+
+                    var url = 'http://revo.webmurahbagus.com/woocommerce-mobile/server/test.php';
+                    var xhr = new XMLHttpRequest();
+                    if ("withCredentials" in xhr){
+                      xhr.open("GET", url, true);
+                    } else if (typeof XDomainRequest != "undefined"){
+                      xhr = new XDomainRequest();
+                      xhr.open(method, url);
+                    } else {
+                      xhr = null;
+                    }
+
+                    xhr.setRequestHeader(
+                      'X-Requested-With', 'XMLHttpRequest');
+                    xhr.send();
+
+                    data = $(this).serialize() + "&" + $.param(data);
+                    $.ajax
+                    ({
+                        url: url, //Relative or absolute path to response.php file
+                        type: "GET",
+                        crossDomain: true,
+                        data: data,
+                        dataType: "json", 
+                        async: false,
+
+                        success: function(data) {
+                          if(data != "" && data != null)
+                          {
+                            storage.setItem("all_produk", JSON.stringify(data));
+                            // console.log(storage.getItem("all_produk"));
+                            result = data;
+                            status = true;
+                          }
+                        },
+                        error: function( jqXhr, textStatus, errorThrown ) {
+                            console.log( errorThrown );
+                        } 
+                    });
+                  }
+                  else
+                  {
+                    status     = true;
+                    result     = JSON.parse(storage.getItem("all_produk"));
+                  }
+                  if(status)
+                  {
+                    var content = document.getElementById('content');
+                    var menu = document.getElementById('menu');
+                    content.load(page)
+                      .then(menu.close.bind(menu));
+
+                    setTimeout(function() {
+
+                        document.getElementById('title').innerHTML = JSON.parse(newdata)["name"];
+
+                        var div               = document.getElementById('product');
+
+                        while(div.firstChild){
+                          div.removeChild(div.firstChild);
+                        }
+
+                        // console.log(Object.keys(result["produk"]).length);
+                        for (var i = 0; i < Object.keys(result["produk"]).length; i++) {
+                          var produk = JSON.parse(JSON.stringify(result["produk"][i]));
+
+                          var div_produk        = document.createElement('div');
+                          div_produk.setAttribute("class",'col-xs-6');
+                          div_produk.setAttribute("style",'padding:0px;');
+
+                          var ons_button        = document.createElement('ons-button');
+                          ons_button.setAttribute("class",'item-set button');
+                          ons_button.setAttribute("onclick","fn.buttonClick("+JSON.stringify(produk)+","+newdata+")");
+
+                          var div_image         = document.createElement('div');
+                          div_image.setAttribute("class",'sub-item-image');
+
+                          var image             = document.createElement('img');
+                          image.setAttribute("style",'width:100%;');
+                          image.setAttribute("src",produk["gambar_produk"][0]["src"]);
+                          div_image.appendChild(image);
+
+                          var div_detail        = document.createElement('div');
+                          div_detail.setAttribute("class",'sub-item-detail');
+
+                          var p1                = document.createElement('p');
+                          p1.innerHTML          = produk["nama_produk"];
+                          var p3                = document.createElement('p');
+                          p3.setAttribute("class",'ion-pricetag');
+                          p3.innerHTML          = "<bold> "+produk["harga"]+",-</bold>";
+
+                          div_detail.appendChild(p1);
+                          div_detail.appendChild(p3);
+
+                          ons_button.appendChild(div_image);
+                          ons_button.appendChild(div_detail);
+                          div_produk.appendChild(ons_button);
+                          div.appendChild(div_produk);
+
+                          var cart              = JSON.parse(storage.getItem('cart'));
+                          if(cart != null)
+                          {
+                            var cart_length     = cart.length;
+                            storage.setItem("cart", JSON.stringify(cart));
+
+                            var icon            = document.getElementById('cart_icon');
+                            icon.innerHTML      = cart_length;
+                          }
+                        }
+                    }, 10);
+                  }
+                  setTimeout(function(){
+                    var cart = JSON.parse(storage.getItem("cart"));
+                    if(cart != null)
+                    {
+                      var cart_length = cart.length;
+                      storage.setItem("cart", JSON.stringify(cart));
+
+                      var icon = document.getElementById("cart_icon");
+                      icon.innerHTML = cart_length;
+                    }
+                  }, 10);
+                }
+                else if(page == "detail.html")
+                {
+                  storage.removeItem("atribut_match");
+                  var content                   = document.getElementById('content');
+                  var menu                      = document.getElementById('menu');
+                  content.load(page)
+                    .then(menu.close.bind(menu));
+
+                    setTimeout(function() {
+
+                      var produk = JSON.parse(storage.getItem("produk"));
+
+                      var ons_carousel                      = document.getElementById('carousel');
+
+                      for (var i = 0; i < produk["gambar_produk"].length; i++) {
+                        var ons_carousel_item               = document.createElement('ons-carousel-item');
+                        ons_carousel_item.style.position    = "absolute";
+                        ons_carousel_item.style.visibility  = "visible";
+                        ons_carousel_item.style.left        = (i*100)+"%";
+
+                        var image                           = document.createElement('img');
+                        image.setAttribute('class', 'detail-item-image');
+                        image.setAttribute('src', produk["gambar_produk"][i]["src"]);
+
+                        ons_carousel_item.appendChild(image);
+                        ons_carousel.appendChild(ons_carousel_item);
+                      }
+                      var ons_carousel_cover                = document.createElement('ons-carousel-cover');
+                      var div_cover_label                   = document.createElement('div');
+                      div_cover_label.setAttribute('class', 'cover-label');
+
+                      for (var i = 0; i < produk["gambar_produk"].length; i++) {
+                        var span                    = document.createElement('span');
+                        span.setAttribute('class','indicators ion-record');
+                        div_cover_label.appendChild(span);
+                      }
+                      ons_carousel_cover.appendChild(div_cover_label);
+
+                      ons_carousel.appendChild(ons_carousel_cover);
+
+                      var div                       = document.getElementsByClassName('detail-item col-xs-12')[0];
+                      var ons_toolbar               = document.getElementById('back_button');
+                      ons_toolbar.setAttribute("onclick","fn.load('wanita.html','"+newdata+"')");
+                      
+
+                      var div_separated             = document.createElement('div');
+                      div_separated.setAttribute("class",'separated');
+
+                      var div_detail                = document.createElement('div');
+                      div_detail.setAttribute("class",'detail-sub-item-detail panel panel-default');
+
+                      var judul                     = document.createElement('h4');
+                      judul.innerHTML               = "Deskripsi Produk";
+
+                      var garis                     = document.createElement('hr');
+
+                      var nama_produk               = document.createElement('p');
+                      nama_produk.innerHTML         = produk["nama_produk"];
+
+                      var jenis_produk              = document.createElement('p');
+                      jenis_produk.innerHTML        = "Leopard Print T-Shirt";
+
+                      var harga_produk              = document.createElement('p');
+                      harga_produk.setAttribute("id","harga_produk");
+                      harga_produk.innerHTML        = "<b>"+produk["harga"]+",-</b>";
+
+                      var enter                     = document.createElement('br');
+
+                      var deskripsi_produk          = document.createElement('p');
+                      deskripsi_produk.innerHTML    = produk["deskripsi"];
+
+
+                      //VARIASI + CART BUTTON
+                      var div_cart                  = document.createElement('div');
+                      div_cart.setAttribute("class",'detail-sub-item-cart panel panel-default');
+
+                      if(produk["atribut"] != null)
+                      {
+                        for (var i = 0; i < produk["atribut"].length; i++) {
+                          var ons_row                 = document.createElement('ons-row');
+                          ons_row.setAttribute('style','margin-bottom:1em;');
+                          var ons_col                 = document.createElement('ons-col');
+                          ons_col.setAttribute('width', '30%');
+                          ons_col.setAttribute('style', 'display:block; margin:0 auto;');
+
+                          var variation               = document.createElement('p');
+                          variation.setAttribute('style', 'margin-bottom:0;');
+                          variation.innerHTML         = "<b>"+produk["atribut"][i]+"</b>:";
+
+                          var ons_col_dropdown        = document.createElement('ons-col');
+                          ons_col.setAttribute('width', '70%');
+
+                          var div_dropdown            = document.createElement('div');
+                          div_dropdown.setAttribute('class', 'dropdown');
+
+                          var select                  = document.createElement('select');
+                          select.setAttribute('id', 'dropdown'+i);
+                          select.setAttribute('class', 'form-control');
+                          select.setAttribute('onchange', "fn.dropdownChange('"+i+"')");
+
+                          for (var j = 0; j < produk[produk["atribut"][i]].length; j++) {
+
+                            if(j == 0)
+                            {
+                              var option              = document.createElement('option');
+                              option.setAttribute('value', "blank");
+                              option.innerHTML        = "Choose one option";
+                              select.appendChild(option);
+                            }
+                            var option                = document.createElement('option');
+                            var cek                   = false;
+                          
+                            option.setAttribute('value', produk[produk["atribut"][i]][j]["pilihan_variasi"]);
+                            option.innerHTML          = produk[produk["atribut"][i]][j]["pilihan_variasi"].toUpperCase();
+                            select.appendChild(option);
+                          }
+                          div_dropdown.appendChild(select);
+                          ons_col.appendChild(div_dropdown);
+                          ons_col_dropdown.appendChild(variation);
+                          ons_row.appendChild(ons_col_dropdown);
+                          ons_row.appendChild(ons_col);
+
+
+                          div_cart.appendChild(ons_row);
+                        }
+                      }
+
+                        //BUTTON CART
+
+                        var ons_row_button          = document.createElement('ons-row');
+                        ons_row_button.setAttribute('style','margin-top:1em;');
+                        var ons_col_button_cart     = document.createElement('ons-col');
+                        ons_col_button_cart.setAttribute('class','tombol-center');
+                        var div_button_cart         = document.createElement('div');
+                        div_button_cart.setAttribute('class','tombol-center');
+                        var button_cart             = document.createElement('ons-button');
+                        button_cart.setAttribute('class','tombol ion-ios-cart-outline button button--tappable');
+                        button_cart.setAttribute('id','button_add_to_cart');
+                        button_cart.setAttribute('ng-click','alert(true)');
+                        button_cart.setAttribute('modifier','tappable');
+                        if(produk["atribut"] != null)
+                        {
+                          button_cart.disabled        = true;
+                        }
+                        button_cart.innerHTML       = " Add To Cart";
+
+                        var divxxxxx                = document.createElement('div');
+                        divxxxxx.setAttribute('id','xx');
+                        divxxxxx.setAttribute('style', 'width:100%');
+
+                        div_button_cart.appendChild(button_cart);
+                        ons_col_button_cart.appendChild(div_button_cart);
+
+                        //BUTTON PROCEED
+
+                        var ons_col_button_proceed  = document.createElement('ons-col');
+                        var div_button_proceed      = document.createElement('div');
+                        div_button_proceed.setAttribute('class','tombol-center');
+                        var button_proceed          = document.createElement('ons-button');
+                        button_proceed.setAttribute('class','tombol ion-bag button');
+
+                        button_proceed.setAttribute('onclick',"fn.load('proceed.html')");
+                        // button_proceed.setAttribute('onclick',"fn.load('proceed.html','','"+true+"')");
+                        // ons_list_item.setAttribute("onclick","fn.load('wanita.html','"+JSON.stringify(arr)+"','"+true+"')");
+                        button_proceed.setAttribute('id','button_proceed');
+                        if(produk["atribut"] != null)
+                        {
+                          button_proceed.disabled        = true;
+                        }
+                        button_proceed.innerHTML    = " Proceed";
+
+                        div_button_proceed.appendChild(button_proceed);
+                        ons_col_button_proceed.appendChild(div_button_proceed);
+
+                        ons_row_button.appendChild(ons_col_button_cart);
+                        ons_row_button.appendChild(ons_col_button_proceed);
+                        ons_row_button.appendChild(divxxxxx);
+
+                        div_cart.appendChild(ons_row_button);
+
+                      div_detail.appendChild(judul);
+                      div_detail.appendChild(garis);
+                      div_detail.appendChild(nama_produk);
+                      // div_detail.appendChild(jenis_produk);
+                      div_detail.appendChild(harga_produk);
+                      div_detail.appendChild(enter);
+                      div_detail.appendChild(deskripsi_produk);
+
+                      div.appendChild(div_separated);
+                      div.appendChild(div_detail);
+                      div.appendChild(div_cart);
+
+                      // button_cart.setAttribute('onclick',"fn.load('cart.html')");
+
+                      var cart = JSON.parse(storage.getItem('cart'));
+                      if(cart != null)
+                      {
+                        var cart_length = cart.length;
+                        storage.setItem("cart", JSON.stringify(cart));
+
+                        var icon = document.getElementById('cart_icon2');
+                        icon.innerHTML = cart_length;
+                      }
+
+                      var id          = produk["id_produk"];
+                      var harga       = document.getElementById('harga_produk').innerHTML;
+                      var quantity    = 1;
+                      var arrProduk   = new Array();
+
+                      arrProduk[0]    = id;
+                      arrProduk[1]    = parseInt(harga.replace(/[^0-9\.]/g, ''),10);
+                      arrProduk[2]    = quantity;
+                      arrProduk[3]    = produk["gambar_produk"][0]["src"];
+                      arrProduk[4]    = produk["nama_produk"];
+
+                      button_cart.setAttribute('onclick',"fn.addToCart('"+JSON.stringify(arrProduk)+"')");
+
+                      button_proceed.setAttribute('onclick',"fn.proceed('"+JSON.stringify(arrProduk)+"')");
+
+                    }, 10);
+                }
+
+                else if(page == "cart.html"){
+
+                  console.log(JSON.parse(storage.getItem("cart")));
+                  var content = document.getElementById('content');
+                  var menu = document.getElementById('menu');
+                  content.load(page)
+                    .then(menu.close.bind(menu));
+                    
+                    setTimeout(function() {
+                      var cart_main = document.getElementById('cart_main');
+                      var totalvalue = 0;
+
+                      arrCart = JSON.parse(storage.getItem("cart"));
+
+                      var counter = 1;
+                    if(arrCart != null)
+                    {
+                      if(arrCart.length != 0)
+                      {
+                      for( i = 0; i < arrCart.length; i++){
+                        var id_div1       = 'hidden_div';
+                        var id_div2       = counter.toString();
+                        var id_div        = id_div1.concat(id_div2);
+
+                        var div_produk    = document.createElement('div');
+                        div_produk.setAttribute("class",'sub-cart-item panel panel-default');
+                        div_produk.setAttribute("id", id_div);    
+
+                        var ons_row       = document.createElement('ons-row');
+
+                        //Image
+
+                        var ons_image     = document.createElement('ons-col');
+                        ons_image.setAttribute("class", 'sub-cart-item-img');
+                        ons_image.setAttribute("width", '35%');
+
+                        var image         = document.createElement('img');
+                        image.setAttribute("src", arrCart[i][3]);
+
+                        //Quantity
+
+                        var ons_quantity  = document.createElement('ons-col');
+                        ons_quantity.setAttribute("class", 'quantity');
+                        ons_quantity.setAttribute("width", '20%');
+
+
+                        var id_jumlah1    = 'jumlah';
+                        var id_jumlah2    = counter.toString();
+                        var id_jumlah     = id_jumlah1.concat(id_jumlah2);
+
+                        var input_number  = document.createElement('input');
+                        input_number.setAttribute("id", id_jumlah2);
+                        // console.log(counter);
+                        input_number.setAttribute("value", arrCart[i][2]);
+                        input_number.setAttribute("type", 'number');
+                        input_number.setAttribute("class", 'form-control');
+                        input_number.setAttribute("min", 1);
+
+                      
+                        input_number.addEventListener("change", function(e) {
+                          var index       = parseInt(this.id)-1;
+
+
+                          var arrCart;
+                          if(JSON.parse(storage.getItem("cart")) == null){
+                           arrCart = new Array();
+                          }
+                          else{
+                           arrCart = JSON.parse(storage.getItem("cart"));
+                          }
+                          var arrProduk;
+                          if(JSON.parse(storage.getItem("cart")) != null){
+                            arrProduk = arrCart[index];
+                            console.log(this.id);
+                             
+                            var arrInput      = new Array();
+
+                            var idInput       = arrProduk[0];
+                            var hargaInput    = arrProduk[1];
+                            var quantityInput = parseInt(document.getElementById(this.id).value);
+                            console.log(document.getElementById(this.id).value);
+
+                            arrInput[0]    = idInput;
+                            arrInput[1]    = hargaInput
+                            arrInput[2]    = quantityInput;
+                            arrInput[3]    = arrProduk[3];
+                            arrInput[4]    = arrProduk[4];
+                            arrInput[5]    = arrProduk[5];
+                            arrInput[6]    = arrProduk[6];
+                            arrInput[7]    = arrProduk[7];
+
+                            arrCart.splice(index , 1, arrInput);
+                                   
+                            storage.setItem("cart", JSON.stringify(arrCart));
+                            console.log(JSON.parse(storage.getItem("cart")));
+
+                            var cart_main         = document.getElementById('cart_main');
+                            var child             = document.getElementById('div_process');
+                            cart_main.removeChild(child);
+
+                            var div_process       = document.createElement('div');
+                            div_process.setAttribute("class", 'process-item');
+                            div_process.setAttribute("id", 'div_process');
+
+                            var ons_rowitem       = document.createElement('ons-row');
+
+                            var ons_processitem   = document.createElement('ons-col');
+                            ons_processitem.setAttribute("class", 'sub-process-item');
+                            var processbutton     = document.createElement('ons-button');
+                            processbutton.setAttribute("id", 'proceed');
+                            processbutton.setAttribute("class", 'tombol-proceed ion-ios-cart-outline button button--tappable');
+                            processbutton.setAttribute("onclick", "fn.load('proceed.html')");
+                            var proceed           = document.createTextNode('Proceed');
+                        
+                            var ons_processdetail = document.createElement('ons-col');
+                            ons_processdetail.setAttribute("class", 'sub-process-detail');
+
+                            totalvalue=0;
+
+                            for(i = 0; i<arrCart.length; i++){
+                              totalvalue+=arrCart[i][2]*arrCart[i][1]
+                            }
+
+                            var total       = document.createElement('p');
+                            total.innerHTML =  " Total: <b>"+totalvalue+",-</b>";
+
+                            //Append Process
+                            processbutton.appendChild(proceed);
+
+                            ons_processitem.appendChild(processbutton);
+                            ons_processdetail.appendChild(total);
+
+                            ons_rowitem.appendChild(ons_processitem);
+                            ons_rowitem.appendChild(ons_processdetail);
+
+                            div_process.appendChild(ons_rowitem);
+
+                            cart_main.appendChild(div_process);
+                          }
+                        }, false);
+
+                        var labelquantity         = document.createElement('label');
+                        labelquantity.htmlFor     = 'number';
+                        labelquantity.innerHTML   = 'Quantity';
+
+                        //Detail
+
+                        var ons_detail            = document.createElement('ons-col');
+                        ons_detail.setAttribute("class", 'sub-cart-item-detail');
+
+                        var harga_produk          = document.createElement('p');
+                        harga_produk.innerHTML    = "<b>"+arrCart[i][1]+",-</b>";
+                        var nama_produk           = document.createElement('p');
+                        nama_produk.innerHTML     = "<b>"+arrCart[i][4]+"</b>";
+
+
+                        var br            = document.createElement('br');
+
+                        var button        = document.createElement('button');
+                        button.setAttribute("class", 'tombol-remove');
+                        button.setAttribute("onclick", "fn.deleteItem('"+JSON.stringify(arrCart[i])+"','"+id_div+"')");
+
+                        var remove        = document.createElement('p');
+                        remove.setAttribute("class", 'trash ion-trash-b');
+                        remove.innerHTML  = " Remove";
+
+                        //Append Lvl 1
+
+                        ons_image.appendChild(image);
+
+                        ons_quantity.appendChild(labelquantity);
+                        ons_quantity.appendChild(input_number);
+                       
+                        ons_detail.appendChild(nama_produk);
+                        ons_detail.appendChild(harga_produk);
+
+                        if(arrCart[i][6] != null)
+                        {
+                          for (var k = 0; k < arrCart[i][6].length; k++) {
+                            var variasi_produk              = document.createElement('p');
+                            variasi_produk.innerHTML        = "<b>"+arrCart[i][6][k]+" : "+arrCart[i][7][k]+"</b>";
+                            ons_detail.appendChild(variasi_produk);
+                          }
+                        }
+
+                        ons_detail.appendChild(br);
+                        button.appendChild(remove);
+                        ons_detail.appendChild(button);
+
+                        //Append Lvl 2
+                        ons_row.appendChild(ons_image);
+                        ons_row.appendChild(ons_quantity);
+                        ons_row.appendChild(ons_detail);
+
+                        //Append Lvl 3
+                        div_produk.appendChild(ons_row);
+
+                        //Append Lvl 4
+                        cart_main.appendChild(div_produk);
+                        counter++;
+                      }
+                      // Process
+                      var div_process       = document.createElement('div');
+                      div_process.setAttribute("class", 'process-item');
+                      div_process.setAttribute("id", 'div_process');
+
+                      var ons_rowitem       = document.createElement('ons-row');
+
+                      var ons_processitem   = document.createElement('ons-col');
+                      ons_processitem.setAttribute("class", 'sub-process-item');
+                      var processbutton     = document.createElement('ons-button');
+                      processbutton.setAttribute("id", 'proceed');
+                      processbutton.setAttribute("class", 'tombol-proceed ion-ios-cart-outline button button--tappable');
+                      processbutton.setAttribute("onclick", "fn.load('proceed.html')");
+                      var proceed           = document.createTextNode(' Proceed');
+                  
+
+                      var ons_processdetail = document.createElement('ons-col');
+                      ons_processdetail.setAttribute("class", 'sub-process-detail');
+
+                      totalvalue = 0;
+
+                      for(i = 0; i<arrCart.length; i++){
+                        totalvalue+=arrCart[i][2]*arrCart[i][1]
+                      }
+
+                      var total       = document.createElement('p');
+                      total.innerHTML =  " Total: <b>"+totalvalue+",-</b>";
+
+                      //Append Process
+                      processbutton.appendChild(proceed);
+
+                      ons_processitem.appendChild(processbutton);
+                      ons_processdetail.appendChild(total);
+
+                      ons_rowitem.appendChild(ons_processitem);
+                      ons_rowitem.appendChild(ons_processdetail);
+
+                      div_process.appendChild(ons_rowitem);
+
+                      cart_main.appendChild(div_process);
+                    }
+                    else
+                    {
+                      var div_empty           = document.createElement('div');
+                      div_empty.setAttribute('class', "panel-confirmation");
+
+                      var div_emptycontent    = document.createElement('div');
+                      div_emptycontent.setAttribute('class', 'ion-ios-cart');
+                      div_emptycontent.setAttribute('style', 'font-size: 90px; color:gray;');
+
+                      var text                = document.createElement('p');
+                      text.setAttribute('style', 'font-size: 17px;');
+                      text.innerHTML          = "Tidak Ada Item di Cart Anda";
+
+                      div_emptycontent.appendChild(text);
+                      div_empty.appendChild(div_emptycontent);
+                      cart_main.appendChild(div_empty);
+                    }
+                  }
+                  else
+                  {
+                    var div_empty           = document.createElement('div');
+                    div_empty.setAttribute('class', "panel-confirmation");
+
+                    var div_emptycontent    = document.createElement('div');
+                    div_emptycontent.setAttribute('class', 'ion-ios-cart');
+                    div_emptycontent.setAttribute('style', 'font-size: 90px; color:gray;');
+
+                    var text                = document.createElement('p');
+                    text.setAttribute('style', 'font-size: 17px;');
+                    text.innerHTML          = "Tidak Ada Item di Cart Anda";
+
+                    div_emptycontent.appendChild(text);
+                    div_empty.appendChild(div_emptycontent);
+                    cart_main.appendChild(div_empty);
+                  }
+                  }
+                )
+              }
+              else if(page == "pembayaran.html")
+              {
+                var content = document.getElementById('content');
+                var menu    = document.getElementById('menu');
+                content.load(page)
+                  .then(menu.close.bind(menu));
+
+                var arrCart                     = new Array();
+                arrCart                         = JSON.parse(storage.getItem("cart"));
+                var biaya_transaksi_temp        = 0;
+
+                for(i = 0; i<arrCart.length; i++){
+                  biaya_transaksi_temp         += arrCart[i][2]*arrCart[i][1];
+                }
+
+                //untuk sementara
+                var biaya_kurir_temp            = 0;
+                var total_temp                  = biaya_transaksi_temp;
+
+                setTimeout(function() {
+
+                  //Bagian Transfer Bank
+                  var biaya_transaksi           = document.getElementById("biaya_transaksi_bank");
+                  biaya_transaksi.innerHTML     = "Rp "+biaya_transaksi_temp;
+                  var biaya_kurir               = document.getElementById("biaya_kurir_bank");
+                  biaya_kurir.innerHTML         = "Rp "+biaya_kurir_temp;
+                  var total                     = document.getElementById("total_bank");
+                  total.innerHTML               = "Rp "+total_temp;
+
+                  var biaya_transaksi           = document.getElementById("biaya_transaksi_veritrans");
+                  biaya_transaksi.innerHTML     = "Rp "+biaya_transaksi_temp;
+                  var biaya_kurir               = document.getElementById("biaya_kurir_veritrans");
+                  biaya_kurir.innerHTML         = "Rp "+biaya_kurir_temp;
+                  var total                     = document.getElementById("total_veritrans");
+                  total.innerHTML               = "Rp "+total_temp;
+                  var button_lanjutkan_pembayaran = document.getElementById("button_lanjutkan_pembayaran");
+                  button_lanjutkan_pembayaran.setAttribute('onclick', "fn.proceedSummary('"+newdata+"')");
+
+                }, 10);
+              }
+              else if(page == "summary1.html")
+              {
+                var content                         = document.getElementById('content');
+                var menu                            = document.getElementById('menu');
+                content.load(page)
+                  .then(menu.close.bind(menu));
+
+                setTimeout(function() {
+                  var biaya_total                   = 0;
+                  var arrCart                       = JSON.parse(storage.getItem("cart"));
+                  var customer                      = JSON.parse(newdata);
+                  var data_customer                 = document.getElementById('data_customer');
+
+                  var nama_customer                 = document.createElement('p');
+                  nama_customer.innerHTML           = customer["first_name"]+" "+customer["last_name"];
+                  var nomor_telepon_customer        = document.createElement('p');
+                  nomor_telepon_customer.innerHTML  = customer["phone"];
+                  var alamat_customer               = document.createElement('p');
+                  alamat_customer.innerHTML         = customer["alamat"];
+                  var kota_customer                 = document.createElement('p');
+                  kota_customer.innerHTML           = customer["kota"];
+
+                  data_customer.appendChild(nama_customer);
+                  data_customer.appendChild(nomor_telepon_customer);
+                  data_customer.appendChild(alamat_customer);
+                  data_customer.appendChild(kota_customer);
+
+                  var barang_belanja                = document.getElementById('barang_belanja');
+
+                  var panel_heading                 = document.createElement('div');
+                  panel_heading.setAttribute('class', "panel-heading panel-style");
+                  panel_heading.innerHTML           = "Barang Belanja";
+
+                  var panel_body                    = document.createElement('div');
+                  panel_body.setAttribute('class', "panel-body bodypanel");
+
+                  var item_confirm                  = document.createElement('div');
+                  item_confirm.setAttribute('class', "item-confirm");
+                  console.log(arrCart);
+
+                  for (var i = 0; i < arrCart.length; i++) {
+                    var ons_row                     = document.createElement('ons-row');
+                    ons_row.setAttribute('style', "margin-bottom:5px;");
+
+                    var ons_col_img                 = document.createElement('ons-col');
+                    ons_col_img.setAttribute('style', "width:20%;");
+                    var img                         = document.createElement('img');
+                    img.setAttribute('src', arrCart[i][3]);
+                    ons_col_img.appendChild(img);
+
+                    var ons_col_detil               = document.createElement('ons-col');
+                    ons_col_detil.setAttribute('style', "width:50%;padding-left:10px;");
+
+                    var nama_produk                 = document.createElement('p');
+                    nama_produk.innerHTML           = arrCart[i][4];
+
+                    var quantity_produk             = document.createElement('span');
+                    quantity_produk.innerHTML       = "Quantity : "+arrCart[i][2];
+                    quantity_produk.setAttribute('style', "color:grey;");
+
+                    var br                          = document.createElement('br');
+
+                    ons_col_detil.appendChild(nama_produk);
+                    ons_col_detil.appendChild(quantity_produk);
+                    ons_col_detil.appendChild(br);
+
+                    if(arrCart[i][6] != null)
+                    {
+                      for (var j = 0; j < arrCart[i][6].length; j++) {
+                        var variasi_produk            = document.createElement('span');
+                        variasi_produk.innerHTML      = arrCart[i][6][j]+" : "+arrCart[i][7][j];
+                        variasi_produk.setAttribute('style', "color:grey;");
+
+                        var br1                       = document.createElement('br');
+
+                        ons_col_detil.appendChild(variasi_produk);
+                        ons_col_detil.appendChild(br1);
+                      }
+                    }
+
+
+                    var ons_col_harga               = document.createElement('ons-col');
+                    ons_col_harga.innerHTML         = "<p><b>Rp "+arrCart[i][1]*arrCart[i][2  ]+",-</b></p>";
+                    ons_col_harga.setAttribute('style', "width:30%;");
+
+                    ons_row.appendChild(ons_col_img);
+                    ons_row.appendChild(ons_col_detil);
+                    ons_row.appendChild(ons_col_harga);
+
+                    biaya_total         += arrCart[i][2]*arrCart[i][1];
+
+                    item_confirm.appendChild(ons_row);
+                  }
+
+                  var garis                         = document.createElement('hr');
+                  garis.setAttribute('style', "margin:10px;");
+
+                  var ons_row_total                 = document.createElement('ons-row');
+                  ons_row_total.setAttribute('style', "margin-bottom:5px;");
+
+                  var ons_col_1                     = document.createElement('ons-col');
+                  ons_col_1.setAttribute('style', "width:20%;");
+                  var ons_col_2                     = document.createElement('ons-col');
+                  ons_col_2.innerHTML               = "<b>Grand Total</b>";
+                  ons_col_2.setAttribute('style', "width:50%;");
+                  var ons_col_3                     = document.createElement('ons-col');
+                  ons_col_3.innerHTML               = "<b>Rp "+biaya_total+",-</b>";
+                  ons_col_3.setAttribute('style', "width:30%;");
+
+                  ons_row_total.appendChild(ons_col_1);
+                  ons_row_total.appendChild(ons_col_2);
+                  ons_row_total.appendChild(ons_col_3);
+
+                  item_confirm.appendChild(garis);
+                  item_confirm.appendChild(ons_row_total);
+                  panel_body.appendChild(item_confirm);
+                  barang_belanja.appendChild(panel_heading);
+                  barang_belanja.appendChild(panel_body);
+
+                  var total_transaksi               = document.getElementById('total_transaksi');
+                  total_transaksi.innerHTML         = "Rp "+biaya_total;
+
+                  var checkout_button               = document.getElementById('checkout_button');
+                  checkout_button.setAttribute('onclick', "showDialog('dialog-2' , "+newdata+")");
+
+                  var back_button_summary1 = document.getElementById("back_button_summary1");
+                  back_button_summary1.setAttribute('onclick', "fn.load('pembayaran.html' , "+JSON.stringify(newdata)+")");
+
+
+                }, 10);
+              }
+              else if(page == "checkout.html")
+              {
+                hideDialog('dialog-2');
+
+                setTimeout(function(){
+                  fn.proceedOrder(newdata);
+                }, 100);
+
+              }
+              else if(page == "confirmation.html")
+              {
+                var content = document.getElementById('content');
+                var menu    = document.getElementById('menu');
+                content.load(page)
+                  .then(menu.close.bind(menu));
+                    setTimeout(function() {
+
+                      console.log(newdata);
+
+                      if(newdata == 'konfirmasi')
+                      {
+                        $.notify("Konfirmasi telah dikirim", {position :"bottom center", className: 'success'});
+                      }
+                      if(newdata == 'order')
+                      {
+                        $.notify("Resi telah dikirim ke email anda, harap melakukan konfirmasi", {position :"bottom center", className: 'success'});
+                      }
+
+                      var arrOrder = JSON.parse(storage.getItem("proceed"));
+                      var arrCart;
+
+                      var main_div = document.getElementById("confirm_container");
+
+                      if(arrOrder != null)
+                      {
+                        if(arrOrder.length != 0)
+                        {
+                           // console.log(arrOrder.length);
+                          for(i=0;i<arrOrder.length;i++){
+                            var orderid = arrOrder[i][0];
+                            arrCart   =   arrOrder[i][1];
+
+                            // console.log(orderid);
+                            // console.log(arrCart);
+
+                            var div_order = document.createElement("div");  
+
+                            div_order.setAttribute('id', 'div_order'.concat(i.toString()));
+                            div_order.setAttribute('class', 'process panel panel-default');
+
+                            var h5 = document.createElement("h5");
+                            h5.setAttribute('style', 'text-align:center;');
+                            h5.innerHTML = "Kode Transaksi";
+
+                            var p = document.createElement("p");
+                            p.setAttribute('style', 'text-align:center; font-size:12pt;');
+
+                            p.innerHTML = "<b><i> #"+orderid+"</i></b>";
+
+                            div_order.appendChild(h5);
+                            div_order.appendChild(p);
+
+                            var total = 0;
+
+                            for(j=0;j<arrCart.length;j++)
+                            {
+                              var ons_row = document.createElement("ons-row");
+                              ons_row.setAttribute('id', 'ons_row'.concat(j.toString()));
+                              ons_row.setAttribute('style', "margin-bottom:5px;");
+
+                              var ons_col = document.createElement("ons-col");
+                              ons_col.setAttribute('style',"padding-left: 10px; -webkit-box-flex: 0; flex: 0 0 70%; max-width: 70%;");
+                              ons_col.setAttribute('width',"70%;");
+
+                              var p1 = document.createElement("p");
+                              p1.setAttribute('style',"margin:0px;")
+                              p1.innerHTML = arrCart[j][4];
+
+                              var span = document.createElement("span");
+                              span.setAttribute('style','color:grey;');
+                              span.innerHTML = "Quantity: "+arrCart[j][2];
+
+                              var ons_col0 = document.createElement("ons-col");
+                              ons_col0.setAttribute("style", "-webkit-box-flex: 0; flex: 0 0 30%; max-width: 30%;")
+                              ons_col0.setAttribute('width',"30%");
+
+                              var p2 = document.createElement("p");
+                              p2.innerHTML = "<b> Rp."+arrCart[j][1]*arrCart[j][2]+"</b>";
+                              total+=arrCart[j][1]*arrCart[j][2];
+
+                              ons_col.appendChild(p1);
+                              ons_col.appendChild(span);
+                              ons_col0.appendChild(p2);
+
+                              ons_row.appendChild(ons_col);
+                              ons_row.appendChild(ons_col0);
+
+                              div_order.appendChild(ons_row);
+                            }
+
+                            var hr       = document.createElement("hr");
+                            hr.setAttribute("style","margin:10px;");
+
+                            div_order.appendChild(hr);
+
+                            var ons_row0 = document.createElement("ons-row");
+                            ons_row0.setAttribute("style","margin-bottom:10px;");
+                            var ons_col1 = document.createElement("ons-col");
+                            ons_col1.setAttribute("width","20%");
+                            var ons_col2 = document.createElement("ons-col");
+                            ons_col2.setAttribute("width","50%");
+                            ons_col2.innerHTML = "<b>Grand Total: </b>";
+                            var ons_col3 = document.createElement("ons-col");
+                            ons_col3.setAttribute("width","30%");
+                            ons_col3.innerHTML = "<b>Rp."+total+"</b>";
+
+                            ons_row0.appendChild(ons_col1);
+                            ons_row0.appendChild(ons_col2);
+                            ons_row0.appendChild(ons_col3);
+
+                            div_order.appendChild(ons_row0);
+
+                            ons_button = document.createElement("ons-button");
+                            ons_button.setAttribute("modifier","large");
+                            ons_button.setAttribute("onclick","fn.load('form.html', "+orderid+")");
+                            ons_button.innerHTML = "Konfirmasi";
+
+                            div_order.appendChild(ons_button);
+
+                            main_div.appendChild(div_order);
+                          }
+                        }
+                        else{
+                          var order_none = document.createElement("div");
+                          order_none.setAttribute("class","panel-confirmation");
+
+                          var order_nonemsg = document.createElement("div");
+                          order_nonemsg.setAttribute("class","ion-android-done");
+                          order_nonemsg.setAttribute("style","font-size: 90px; color:green;");
+                          
+                          var noorder = document.createTextNode("Tidak ada Konfirmasi Pembayaran");
+
+                          order_none.appendChild(order_nonemsg);
+                          order_none.appendChild(noorder);
+
+                          main_div.appendChild(order_none);
+                        }                      
+                      }
+                      else{
+                        var order_none = document.createElement("div");
+                        order_none.setAttribute("class","panel-confirmation");
+
+                        var order_nonemsg = document.createElement("div");
+                        order_nonemsg.setAttribute("class","ion-android-done");
+                        order_nonemsg.setAttribute("style","font-size: 90px; color:green;");
+                        
+                        var noorder = document.createTextNode("Tidak ada Konfirmasi Pembayaran");
+
+                        order_none.appendChild(order_nonemsg);
+                        order_none.appendChild(noorder);
+
+                        main_div.appendChild(order_none);
+                      }
+                    });
+              }
+              else if(page == "form.html")
+              {
+                //Button Konfirmasi ditekan
+                var content = document.getElementById('content');
+                var menu    = document.getElementById('menu');
+                content.load(page)
+                  .then(menu.close.bind(menu));
+
+                setTimeout(function(){
+                  if(newdata != null)
+                  {
+                    var form_kode_konfirmasi      = document.getElementById('kode_konfirmasi');
+                    form_kode_konfirmasi.value    = newdata;
+                    form_kode_konfirmasi.disabled = true;
+                  }
+
+                  var tahun                     = document.getElementById('tahun');
+                  var currentTime               = new Date();
+                  var year                      = currentTime.getFullYear();
+                  for (var i = year-4; i <= year; i++) {
+                    var option                  = document.createElement('option');
+                    option.setAttribute('value', i);
+                    option.innerHTML            = i;
+                    tahun.appendChild(option);
+                  }
+
+                }, 10);
+              }
+            };
+
+            window.fn.buttonClick = function(produk, newdata) {
+              storage.removeItem("produk");
+              storage.setItem("produk", JSON.stringify(produk));
+              storage.removeItem("filter");
+              fn.load('detail.html',JSON.stringify(newdata));
+            };
+
+            window.fn.proceed = function(arrProduk){
+              fn.addToCart(arrProduk, true);
+              fn.load('proceed.html');
+            }
+
+            window.fn.proceedDataDiri = function(){
+              var status              = false;
+              var first_name          = document.getElementById('nama_depan').value;
+              var last_name           = document.getElementById('nama_belakang').value;
+              var perusahaan          = document.getElementById('perusahaan').value;
+              var alamat              = document.getElementById('alamat_pengiriman').value;
+              var kota                = document.getElementById('kota_pengiriman').value;
+              var kode_pos            = document.getElementById('kode_pos').value;
+              var provinsi            = document.getElementById('provinsi').value;
+              var email               = document.getElementById('email');
+              var phone               = document.getElementById('nomor_telepon').value;
+
+                // nama_depan_error
+                // alamat_error
+                // kota_error
+                // kode_pos_error
+                // email_error
+
+                if(first_name == "" || alamat == "" || kota == "" ||
+                   kode_pos == "" || email.value == "" || !ValidateForm(email) || phone == "")
+                {
+                  fn.load("proceed.html");
+
+                setTimeout(function(){
+                  if(first_name == "")
+                  {
+                    var span_nama_depan           = document.getElementById('nama_depan_error');
+                    span_nama_depan.innerHTML     = " *nama depan harus diisi";
+                  }
+                  if(alamat == "")
+                  {
+                    var span_alamat               = document.getElementById('alamat_error');
+                    span_alamat.innerHTML         = " *alamat harus diisi";
+                  }
+                  if(kota == "")
+                  {
+                    var span_kota                 = document.getElementById('kota_error');
+                    span_kota.innerHTML           = " *kota harus diisi";
+                  }
+                  if(kode_pos == "")
+                  {
+                    var span_kode_pos             = document.getElementById('kode_pos_error');
+                    span_kode_pos.innerHTML       = " *kode pos harus diisi";
+                  }
+                  if(email.value == "")
+                  {
+                    var span_email                = document.getElementById('email_error');
+                    span_email.innerHTML          = " *email harus diisi";
+                  }
+                  else if(!ValidateForm(email))
+                  {
+                    var span_email                = document.getElementById('email_error');
+                    span_email.innerHTML          = " *format email salah";
+                  }
+                  if(phone == "")
+                  {
+                    var span_nomor_telepon        = document.getElementById('nomor_telepon_error');
+                    span_nomor_telepon.innerHTML  = " *nomor telepon harus diisi";
+                  }
+
+                  //Kalau sudah ada isinya dan tidak error
+                  if(first_name != "")
+                    {document.getElementById('nama_depan').value = first_name;}
+                  if(last_name != "")
+                    {document.getElementById('nama_belakang').value = last_name;}
+                  if(perusahaan != "")
+                    {document.getElementById('perusahaan').value = perusahaan;}
+                  if(alamat != "")
+                    {document.getElementById('alamat_pengiriman').value = alamat;}
+                  if(kota != "")
+                    {document.getElementById('kota_pengiriman').value = kota;}
+                  if(kode_pos != "")
+                    {document.getElementById('kode_pos').value = kode_pos;}
+                  if(provinsi != "")
+                    {document.getElementById('provinsi').value = provinsi;}
+                  if(phone != "")
+                    {document.getElementById('nomor_telepon').value = phone;}
+                }, 10);
+
+                }
+                else
+                {
+                  var customer = {
+                    "first_name"          : first_name,
+                    "last_name"           : last_name,
+                    "perusahaan"          : perusahaan,
+                    "alamat"              : alamat,
+                    "kota"                : kota,
+                    "kode_pos"            : kode_pos,
+                    "provinsi"            : provinsi,
+                    "email"               : email.value,
+                    "phone"               : phone,
+                  };
+
+                  //customer sebagai parameter newdata
+                  fn.load('pembayaran.html', JSON.stringify(customer));
+                  return;
+                }
+            } 
+
+            function ValidateForm(email){
+              if ((email.value==null)||(email.value=="")){
+                return false;
+              }
+              if (checkEmail(email.value)==false){
+                return false;
+              }
+              return true;
+            }
+
+            function checkEmail(emailAddress) {
+              var at      = "@";
+              var dot     = ".";
+              var lat     = emailAddress.indexOf(at);
+              var lstr    = emailAddress.length;
+              var ldot    = emailAddress.indexOf(dot);
+              if (emailAddress.indexOf(at)==-1){
+                 return false;
+              }
+
+              if (emailAddress.indexOf(at)==-1 || emailAddress.indexOf(at)==0 || emailAddress.indexOf(at)==lstr){
+                 return false;
+              }
+
+              if (emailAddress.indexOf(dot)==-1 || emailAddress.indexOf(dot)==0 || emailAddress.indexOf(dot)==lstr){
+                  return false;
+              }
+
+               if (emailAddress.indexOf(at,(lat+1))!=-1){
+                  return false;
+               }
+
+               if (emailAddress.substring(lat-1,lat)==dot || emailAddress.substring(lat+1,lat+2)==dot){
+                  return false;
+               }
+
+               // if (emailAddress.substring(emailAddress.substring(lat, lstr).indexOf(dot) + lat + 1, lstr).indexOf(dot)!= -1){ 
+               //    console.log("salah");
+               //    return false;
+               // }
+
+               if (emailAddress.indexOf(dot,(lat+2))==-1){
+                  return false;
+               }
+              
+               if (emailAddress.indexOf(" ")!=-1){
+                  return false;
+               }
+
+               return true;          
+            }
+
+
+            window.fn.proceedSummary = function(customer){
+
+              //ambil data pembayaran (bank atau veritrans)
+              fn.load('summary1.html', customer);
+            }
+
+            window.fn.proceedOrder = function(customer){
+                var id_order;
+                var status              = false;
+                var first_name          = customer["first_name"];
+                var last_name           = customer["last_name"];
+                var perusahaan          = customer["perusahaan"];
+                var alamat              = customer["alamat"];
+                var kota                = customer["kota"];
+                var kode_pos            = customer["kode_pos"];
+                var provinsi            = customer["provinsi"];
+                var email               = customer["email"];
+                var phone               = customer["phone"];
+
+                var customer = {
+                        "first_name"          : first_name,
+                        "last_name"           : last_name,
+                        "perusahaan"          : perusahaan,
+                        "alamat"              : alamat,
+                        "kota"                : kota,
+                        "kode_pos"            : kode_pos,
+                        "provinsi"            : provinsi,
+                        "email"               : email,
+                        "phone"               : phone,
+                      };
+
+                 var data = {
+                        "action"              : "order",
+                        "customer"            : customer,
+                        "item"                : JSON.parse(storage.getItem("cart")),
+                      };
+
+                      var url = 'http://revo.webmurahbagus.com/woocommerce-mobile/server/test.php';
+                      var xhr = new XMLHttpRequest();
+                      if ("withCredentials" in xhr){
+                        xhr.open("POST", url, true);
+                      } else if (typeof XDomainRequest != "undefined"){
+                        xhr = new XDomainRequest();
+                        xhr.open(method, url);
+                      } else {
+                        xhr = null;
+                      }
+
+                      xhr.setRequestHeader(
+                        'X-Requested-With', 'XMLHttpRequest');
+                      xhr.send();
+
+                      data = $(this).serialize() + "&" + $.param(data);
+                      $.ajax
+                      ({
+                            url: url, //Relative or absolute path to response.php file
+                            type: "POST",
+                            crossDomain: true,
+                            data: data,
+                            dataType: "text", 
+                            async: false,
+
+                            success: function(data) {
+                              if(data != "" && data != null)
+                              {
+                                  // console.log(data);
+                                  id_order = JSON.parse(data)["order"]["id"];
+
+                                  status = true;
+                              }
+                            },
+                            error: function( jqXhr, textStatus, errorThrown ) {
+                                console.log( errorThrown );
+                            } 
+                      });
+
+                   if(status)
+                    {
+                      setTimeout(function() 
+                      {
+                        var content = document.getElementById('content');
+                        var menu = document.getElementById('menu');
+
+                        var arrCart;
+                        arrCart  = JSON.parse(storage.getItem("cart"));
+
+                        var arrOrder;
+
+                        var order = new Array();
+                        order[0]  = id_order;
+                        order[1]  = arrCart;
+
+                        if(JSON.parse(storage.getItem("proceed")) == null){
+                         arrOrder  = new Array();
+                        }
+                        else{
+                         arrOrder = JSON.parse(storage.getItem("proceed"));
+                        }
+    
+                        arrOrder.push(order);
+                        storage.setItem("proceed", JSON.stringify(arrOrder)); 
+                        storage.setItem("cart", JSON.stringify(arrCart));
+
+                        //PERBAIKI ==================================================================================
+
+                        fn.sendEmail(order, email);
+                        fn.load("confirmation.html", "order");
+                      }, 10);
+                    }
+            }
+
+            window.fn.sendEmail = function(order_data, email_customer){
+
+              var proceed = order_data;
+              console.log(proceed);
+
+              var html;
+              var total = 0;
+
+              //TEMPLATE EMAIL
+
+              html = "<p>Dear Customer, berikut adalah resi dari pembelian anda<p>";
+              html += "<p>Jangan lupa mengkonfirmasi pembayaran anda di halaman konfirmasi, atau jika resi tidak ada di halaman konfirmasi silahkan langsung mengisi form baru di menu yang telah disediakan<p>";
+              html += "<p>Terima kasih atas pembelian yang telah anda lakukan :D<p>";
+              html += "<br>";
+              html += "<br>";
+
+              html += "<div style='width:50%; margin:auto;'>";
+              html += "<table style='width:100%'>";
+              // for (var k = 0; k < proceed.length; k++) {
+
+                html += "<tr><th colspan='2' style='text-align:center;'>Kode Transaksi</th></tr>";
+                html += "<tr><th colspan='2'>#"+proceed[0]+"</th></tr>";
+                for (var i = 0; i < proceed[1].length; i++) 
+                {
+                  //Loop
+                  html += "<tr><td style='font-size:15px; padding-top: 10px;'><b>"+proceed[1][i][4]+"</b></td>";
+                  if(proceed[1][i][6] != null)
+                  {
+                     html += "<td rowspan='"+(2 + proceed[1][i][6].length)+"'";
+                  }
+                  else
+                  {
+                     html += "<td rowspan='2'";
+                  }
+                  html += "style='font-size:15px; text-align:right; padding: 10px;'><b>Rp. "+(proceed[1][i][2]*proceed[1][i][1])+"</b></td></tr>";
+                  html += "<tr><td style='font-size:10px;'>Quantity : "+proceed[1][i][2]+"</td></tr>";
+
+                  if(proceed[1][i][6] != null)
+                  {
+                    for (var j = 0; j < proceed[1][i][6].length; j++) {
+                      html += "<tr><td style='font-size:10px;'>"+proceed[1][i][6][j]+" : "+proceed[1][i][7][j]+"</td></tr>";
+                    }
+                  }
+
+                  total += proceed[1][i][2]*proceed[1][i][1];
+
+                }
+                html += "<tr><td style='border-top: 1px solid #ddd; font-size:15px;'><b>Grand Total</b></td>";
+
+                //Hitung total
+                html += "<td style='border-top: 1px solid #ddd; text-align:right; font-size:15px; padding: 10px;'><b>Rp. "+total+"</b></td></tr>";
+
+              // }
+              html += "</table>";
+              html += "</div>";
+              html += "<br>";
+              html += "<p>*Abaikan email ini jika sudah pernah melakukan konfirmasi<p>";
+
+
+              var data = {
+                "action"              : "email",
+                "target"              : "client",
+                "html"                : html,
+                "email"               : email_customer,
+              };
+
+              var url = 'http://revo.webmurahbagus.com/woocommerce-mobile/server/test.php';
+              var xhr = new XMLHttpRequest();
+              if ("withCredentials" in xhr){
+                xhr.open("POST", url, true);
+              } else if (typeof XDomainRequest != "undefined"){
+                xhr = new XDomainRequest();
+                xhr.open(method, url);
+              } else {
+                xhr = null;
+              }
+
+              xhr.setRequestHeader(
+                'X-Requested-With', 'XMLHttpRequest');
+              xhr.send();
+
+              data = $(this).serialize() + "&" + $.param(data);
+              $.ajax
+              ({
+                    url: url, //Relative or absolute path to response.php file
+                    type: "POST",
+                    crossDomain: true,
+                    data: data,
+                    dataType: "text", 
+                    async: false,
+
+                    success: function(data) {
+                      if(data != "" && data != null)
+                      {
+                        console.log(data);
+                          status = true;
+                      }
+                    },
+                    error: function( jqXhr, textStatus, errorThrown ) {
+                        console.log( errorThrown );
+                    } 
+              });
+            }
+
+            window.fn.paymentConfirmation = function() { 
+
+              var html                        = "";
+              var kode_konfirmasi             = document.getElementById('kode_konfirmasi').value;
+              var nama_konfirmasi             = document.getElementById('nama_konfirmasi').value;
+              var email_konfirmasi            = document.getElementById('email_konfirmasi');
+              var bank_konfirmasi             = document.getElementById('bank_konfirmasi').value;
+              var tanggal                     = document.getElementById('tanggal').value;
+              var bulan                       = document.getElementById('bulan').value;
+              var tahun                       = document.getElementById('tahun').value;
+              var nilai_transfer_konfirmasi   = document.getElementById('nilai_transfer_konfirmasi').value;
+              var foto_konfirmasi             = document.getElementById('foto_konfirmasi').getAttribute('src');
+              var catatan_konfirmasi          = document.getElementById('catatan_konfirmasi').value;
+
+
+              if(nama_konfirmasi == "" || email_konfirmasi == "" || !ValidateForm(email_konfirmasi) ||   nilai_transfer_konfirmasi == "")
+              {
+                  fn.load("form.html", kode_konfirmasi);
+
+                  setTimeout(function(){
+                    if(nama_konfirmasi == "")
+                    {
+                      var span_nama_depan           = document.getElementById('nama_depan_form_error');
+                      span_nama_depan.innerHTML     = " *nama depan harus diisi";
+                    }
+                    if(email_konfirmasi.value == "")
+                    {
+                      var span_email                = document.getElementById('email_form_error');
+                      span_email.innerHTML          = " *email harus diisi";
+                    }
+                    else if(!ValidateForm(email_konfirmasi))
+                    {
+                      var span_email                = document.getElementById('email_form_error');
+                      span_email.innerHTML          = " *format email salah";
+                    }
+                    if(nilai_transfer_konfirmasi == "")
+                    {
+                      var span_nilai_transfer       = document.getElementById('nilai_transfer_form_error');
+                      span_nilai_transfer.innerHTML = " *nilai transfer harus diisi";
+                    }
+
+                    //Kalau sudah ada isinya dan tidak error
+                    if(nama_konfirmasi != "")
+                    {document.getElementById('nama_konfirmasi').value = nama_konfirmasi;}
+                    if(nilai_transfer_konfirmasi != "")
+                    {document.getElementById('nilai_transfer_konfirmasi').value = nilai_transfer_konfirmasi;}
+
+                  }, 10);
+                }
+                else
+                {
+                  html = "<p>Dear Admin,<p>";
+                  html += "<p>Berikut pembayaran yang perlu dikonfirmasi : <p>";
+                  html += "<br>";
+
+                  html += "<div style='width:70%; margin:auto;'>";
+                  html += "<table style='width:100%;'>";
+                  html += "<tr><th colspan='3' style='text-align:center;'>Kode Transaksi</th></tr>";
+                  html += "<tr><th colspan='3'>#"+kode_konfirmasi+"</th></tr>";
+                  html += "<tr><td colspan='3' style='padding-top: 20px;'></td></tr>";
+                  html += "<tr> <td style='font-size:15px; padding-top: 10px;width: 40%;'><b>Nama</b></td>";
+                  html += "<td><b>:</b></td>";
+                  html += "<td style='font-size:15px;'><b>"+nama_konfirmasi+"</b></td> </tr>";
+                  html += "<tr> <td style='font-size:15px; padding-top: 10px;width: 40%;'><b>Email</b></td>";
+                  html += "<td><b>:</b></td>";
+                  html += "<td style='font-size:15px;'><b>"+email_konfirmasi+"</b></td> </tr>";
+                  html += "<tr> <td style='font-size:15px; padding-top: 10px;width: 40%;'><b>Bank</b></td>";
+                  html += "<td><b>:</b></td>";
+                  html += "<td style='font-size:15px;'><b>"+bank_konfirmasi+"</b></td> </tr>";
+                  html += "<tr> <td style='font-size:15px; padding-top: 10px;width: 40%;'><b>Tanggal transfer</b></td>";
+                  html += "<td><b>:</b></td>";
+                  html += "<td style='font-size:15px;'><b>"+tanggal+" "+bulan+" "+tahun+"</b></td> </tr>";
+                  html += "<tr> <td style='font-size:15px; padding-top: 10px;width: 40%;'><b>Nilai transfer</b></td>";
+                  html += "<td><b>:</b></td>";
+                  html += "<td style='font-size:15px;'><b> Rp "+nilai_transfer_konfirmasi+"</b></td> </tr>";
+                  html += "<tr><td style='vertical-align:top; font-size:15px; padding-top: 10px;width: 40%;'><b>Catatan tambahan</b></td>";
+                  html += "<td style='vertical-align:top'><b>:</b></td>";
+                  html += "<td style='font-size:14px; padding-top:5px; word-break: break-all; overflow: hidden;'>"+catatan_konfirmasi+"</td></tr>";
+                  html += "</table>";
+                  html += "</div>";
+
+                   var data = {
+                      "action"          : "email",
+                      "target"          : "admin",
+                      "html"            : html,
+                      "attachment"      : foto_konfirmasi,
+                    };
+
+                    var url = 'http://revo.webmurahbagus.com/woocommerce-mobile/server/test.php';
+                    var xhr = new XMLHttpRequest();
+                    if ("withCredentials" in xhr){
+                      xhr.open("POST", url, true);
+                    } else if (typeof XDomainRequest != "undefined"){
+                      xhr = new XDomainRequest();
+                      xhr.open(method, url);
+                    } else {
+                      xhr = null;
+                    }
+
+                    xhr.setRequestHeader(
+                      'X-Requested-With', 'XMLHttpRequest');
+                    xhr.send();
+
+                    data = $(this).serialize() + "&" + $.param(data);
+                    $.ajax
+                    ({
+                        url: url, //Relative or absolute path to response.php file
+                        type: "POST",
+                        crossDomain: true,
+                        data: data,
+                        dataType: "text", 
+                        async: false,
+
+                        success: function(data) {
+                          if(data != "" && data != null)
+                          {
+                            var arrOrder = JSON.parse(storage.getItem("proceed"));
+                            for (var i = 0; i < arrOrder.length; i++) {
+                              if(kode_konfirmasi == arrOrder[i][0])
+                              {
+                                 arrOrder.splice(i, 1);
+                              }
+                              storage.setItem("proceed", JSON.stringify(arrOrder));
+                            }
+                            fn.load('confirmation.html', 'konfirmasi');
+                          }
+                        },
+                        error: function( jqXhr, textStatus, errorThrown ) {
+                            console.log( errorThrown );
+                        } 
+                    });
+                }
+
+            };
+
+            window.fn.addToCart = function(arrProduk, cek){
+              arrProduk         = JSON.parse(arrProduk);
+
+              if(storage.getItem("variasi") != null)
+              {
+                var arr         = new Array();
+                arr             = JSON.parse(storage.getItem("variasi"));
+                arrProduk[1]    = arr[3];
+                arrProduk[5]    = arr[0];
+                arrProduk[6]    = arr[1];
+                arrProduk[7]    = arr[2];
+              }
+
+              console.log(arrProduk);
+               
+              var arrCart;
+  
+              if(JSON.parse(storage.getItem("cart")) == null){
+               arrCart  = new Array();
+              }
+              else{
+               arrCart  = JSON.parse(storage.getItem("cart"));
+              }
+              if(arrCart.length == 0)
+              {
+                 arrCart.push(arrProduk);
+                 storage.setItem("cart", JSON.stringify(arrCart)); 
+              }
+              else{
+               for (i = 0; i < arrCart.length; i++) {
+                if(arrProduk[0] == arrCart[i][0] && arrProduk[5] == arrCart[i][5])
+                {
+                  arrCart[i][2] += 1;
+                  break;
+                }
+
+                if(i == arrCart.length-1)
+                {
+                  arrCart.push(arrProduk);
+                  break;
+                }
+               }
+               storage.setItem("cart", JSON.stringify(arrCart));
+             }
+
+             $.notify("Berhasil memasukkan ke cart", {position :"bottom center", className: 'success'});
+
+              var cart = JSON.parse(storage.getItem("cart"));
+              if(cart != null)
+              {
+                var cart_length = cart.length;
+                storage.setItem("cart", JSON.stringify(cart));
+
+                var icon = document.getElementById("cart_icon2");
+                icon.innerHTML = cart_length;
+              }
+
+              storage.removeItem("variasi");
+            }
+
+            window.fn.deleteItem = function(arrProduk, id_div){
+             
+              var arrProduk = JSON.parse(arrProduk);
+              var idProduk  = arrProduk[0];
+
+              var arrCart;
+              
+              arrCart       = JSON.parse(storage.getItem("cart"));
+              
+              if(arrCart.length != 0){
+                for(i=0; i < arrCart.length; i++)
+                {
+                  if(arrProduk[0] == arrCart[i][0] && arrProduk[5] == arrCart[i][5]){
+                    arrCart.splice(i , 1);
+                    break;
+                  }
+                }
+                storage.setItem("cart", JSON.stringify(arrCart));
+                
+                var cart_main         = document.getElementById('cart_main');
+                var child             = document.getElementById(id_div);
+                cart_main.removeChild(child);
+
+                var cart_main         = document.getElementById('cart_main');
+                var child             = document.getElementById('div_process');
+                cart_main.removeChild(child);
+
+                var div_process       = document.createElement('div');
+                div_process.setAttribute("class", 'process-item');
+                div_process.setAttribute("id", 'div_process');
+
+                var ons_rowitem       = document.createElement('ons-row');
+
+                var ons_processitem   = document.createElement('ons-col');
+                ons_processitem.setAttribute("class", 'sub-process-item');
+                var processbutton     = document.createElement('ons-button');
+                processbutton.setAttribute("id", 'proceed');
+                processbutton.setAttribute("class", 'tombol-proceed ion-ios-cart-outline button button--tappable');
+                processbutton.setAttribute("onclick", "fn.load('proceed.html')");
+                var proceed           = document.createTextNode('Proceed');
+            
+                var ons_processdetail = document.createElement('ons-col');
+                ons_processdetail.setAttribute("class", 'sub-process-detail');
+
+                totalvalue=0;
+
+                for(i = 0; i<arrCart.length; i++){
+                  totalvalue+=arrCart[i][2]*arrCart[i][1]
+                }
+
+                var total       = document.createElement('p');
+                total.innerHTML =  " Total: <b>"+totalvalue+",-</b>";
+
+                //Append Process
+                processbutton.appendChild(proceed);
+
+                ons_processitem.appendChild(processbutton);
+                ons_processdetail.appendChild(total);
+
+                ons_rowitem.appendChild(ons_processitem);
+                ons_rowitem.appendChild(ons_processdetail);
+
+                div_process.appendChild(ons_rowitem);
+
+                cart_main.appendChild(div_process);
+              }
+              if(arrCart.length == 0)
+              {
+                var cart_main           = document.getElementById('cart_main');
+                var child               = document.getElementById('div_process');
+                cart_main.removeChild(child);
+
+                var div_empty           = document.createElement('div');
+                div_empty.setAttribute('class', "panel-confirmation");
+
+                var div_emptycontent    = document.createElement('div');
+                div_emptycontent.setAttribute('class', 'ion-ios-cart');
+                div_emptycontent.setAttribute('style', 'font-size: 90px; color:gray;');
+
+                var text                = document.createElement('p');
+                text.setAttribute('style', 'font-size: 17px;');
+                text.innerHTML          = "Tidak Ada Item di Cart Anda";
+
+                div_emptycontent.appendChild(text);
+                div_empty.appendChild(div_emptycontent);
+                cart_main.appendChild(div_empty);
+              }
+            }
+
+            window.fn.updateItem = function(arrProduk){
+              arrProduk          = JSON.parse(arrProduk);
+              var idProduk       = arrProduk[0];
+
+              var arrCart;
+              if(JSON.parse(storage.getItem("cart")) == null){
+               arrCart = new Array();
+              }
+              else{
+               arrCart = JSON.parse(storage.getItem("cart"));
+              }
+
+              if(JSON.parse(storage.getItem("cart")) != null){
+                for(i=0; i < arrCart.length; i++)
+                {
+                  if(arrProduk[0] == arrCart[i][0]){
+                    var arrInput      = new Array();
+
+                    var idInput       = produk["id_produk"];
+                    var hargaInput    = document.getElementById('harga_produk').innerHTML;
+                    var quantityInput = 1;
+
+                    arrInput[0]       = idInput;
+                    arrInput[1]       = parseInt(hargaInput.replace(/[^0-9\.]/g, ''),10);
+                    arrInput[2]       = quantityInput;
+                    arrInput[3]       = arrProduk[3]    = produk["gambar_produk"][0]["src"];
+                    arrInput[4]       = produk["nama_produk"];
+
+                    arrCart.splice(i , 1, arrInput);
+                    break;
+                  }
+                }
+                storage.setItem("cart", JSON.stringify(arrCart));
+              }
+            }
+
+            window.fn.buttonClick = function(produk, newdata) {
+              storage.removeItem("produk");
+              storage.setItem("produk", JSON.stringify(produk));
+              storage.removeItem("filter");
+              fn.load('detail.html',JSON.stringify(newdata));
+            };
+
+            window.fn.dropdownChange = function(id_dropdown) {
+              var produk            = JSON.parse(storage.getItem("produk"));
+              var counter           = 0;
+
+              if(storage.getItem("filter") == null)
+              {
+                storage.removeItem("filter");
+                var arrFilter       = new Array();
+
+                for (var i = 0; i < produk["atribut"].length; i++) {
+                  var arr           = new Array();
+                  arrFilter.push(arr);
+                }
+                storage.setItem("filter", JSON.stringify(arrFilter));
+              }
+              if(storage.getItem("filter") != null)
+              {
+                var arrFilter       = JSON.parse(storage.getItem("filter"));
+
+                var filter          = arrFilter[id_dropdown];
+                var select          = document.getElementById('dropdown'+id_dropdown);
+                if(select.value != "blank")
+                {
+                  arrFilter[id_dropdown] = new Array();
+                  var smallest = 0;
+                  for (var w = 0; w < arrFilter.length; w++) {
+                    if(arrFilter[w].length < arrFilter[smallest].length && arrFilter[w].length != 0 || 
+                        arrFilter[smallest].length == 0 && arrFilter[w].length != 0)
+                    {
+                      if(w != id_dropdown)
+                      {
+                        smallest = w;
+                      }
+                    }
+                  }
+                    var size    = produk[produk["atribut"][id_dropdown]].length;
+                    for (var j = 0; j < size; j++) {
+                       att      = produk[produk["atribut"][id_dropdown]];
+                       if(select.value == att[j]["pilihan_variasi"])
+                       {
+                          arrFilter[id_dropdown].push(j);
+                       }
+                    }
+                  var size    = produk[produk["atribut"][id_dropdown]].length;
+
+                  storage.setItem("filter", JSON.stringify(arrFilter));
+                }
+                else
+                {
+                  arrFilter[id_dropdown] = new Array();
+                  storage.setItem("filter", JSON.stringify(arrFilter));
+                }
+                for (var i = 0; i < produk["atribut"].length; i++) {
+                  var select       = document.getElementById('dropdown'+i);
+                  
+                  for (var k = 0; k < produk["atribut"].length; k++) {
+                    //dropdown selain i
+                    //cari yang filter paling kecil dan bukan 0
+                    var smallest = 0;
+                    for (var w = 0; w < arrFilter.length; w++) {
+                      if(arrFilter[w].length < arrFilter[smallest].length && arrFilter[w].length != 0 || 
+                          arrFilter[smallest].length == 0 && arrFilter[w].length != 0)
+                      {
+                        smallest = w;
+                      }
+                    }
+
+                    if(k != i)
+                    {
+                      for (var j = 1; j <= produk[produk["atribut"][k]].length; j++) {
+                        select.options[j].style.display = "none";
+                      }
+                      if(arrFilter[smallest].length != 0)
+                      {
+                        for (var j = 0; j < arrFilter[smallest].length; j++) {
+                          select.options[arrFilter[smallest][j]+1].style.display = "block";
+                        }
+                      }
+                      if(arrFilter[k].length == 0)
+                      {
+                        counter++;
+                      }
+                    }
+                    //dropdown selain dia kosong semua
+                    if(counter == produk["atribut"].length-1)
+                    {
+                      for (var j = 1; j <= produk[produk["atribut"][k]].length; j++) {
+                        select.options[j].style.display = "block";
+                      }
+                    }
+                  }
+                  counter = 0;
+                }
+              }
+
+              //Ganti harga produk
+              var count = 0;
+              var small = 0;
+
+              for (var i = 0; i < produk["atribut"].length; i++) {
+                var select                    = document.getElementById('dropdown'+i);
+                if(select.value != "blank")
+                {
+                  count++;
+                }
+              }
+
+              //Variasi sudah lengkap, button cart dan proceed sudah dapat dijalankan
+              if(count == produk["atribut"].length)
+              {
+                for (var i = 0; i < arrFilter.length; i++) {
+                  if(arrFilter[i].length < arrFilter[small].length && arrFilter[i].length != 0 || 
+                      arrFilter[small].length == 0 && arrFilter[i].length != 0)
+                  {
+                    small = i;
+                  }
+                }
+                var harga_produk        = document.getElementById("harga_produk");
+                var arrFinal            = new Array();
+
+                if(arrFilter[small].length > 1)
+                {
+                  console.log("y u du dis");
+                  var harga             = produk[produk["atribut"][small]][arrFilter[small][0]]["harga_variasi"];
+
+                  var arr_nama_atribut  = new Array();
+                  var arr_atribut       = new Array();
+                  for (var i = 0; i < produk["atribut"].length; i++) {
+                    arr_nama_atribut[i] = produk["atribut"][i];
+                    arr_atribut[i]      = produk[produk["atribut"][i]][arrFilter[small][0]]["pilihan_variasi"];
+                    arrFinal[0]         = arrFilter[small][0];
+                  }
+                }
+                else
+                {
+                  var harga             = produk[produk["atribut"][small]][arrFilter[small]]["harga_variasi"];
+
+                  var arr_nama_atribut  = new Array();
+                  var arr_atribut       = new Array();
+                  for (var i = 0; i < produk["atribut"].length; i++) {
+                    arr_nama_atribut[i] = produk["atribut"][i];
+                    arr_atribut[i]      = produk[produk["atribut"][i]][arrFilter[small]]["pilihan_variasi"];
+                    arrFinal[0]         = arrFilter[small][0];
+                  }
+                }
+                harga_produk.innerHTML  = "<b>"+harga+",-</b>";
+
+                arrFinal[1]             = arr_nama_atribut;
+                arrFinal[2]             = arr_atribut;
+                arrFinal[3]             = harga;
+                storage.setItem("variasi", JSON.stringify(arrFinal));
+
+                //Button cart enabled
+                var button_proceed            = document.getElementById('button_add_to_cart');
+                button_proceed.disabled       = false;
+                var button_cart               = document.getElementById('button_proceed');
+                button_cart.disabled          = false;
+              }
+              else if(count != produk["atribut"].length)
+              {
+                //Button cart disabled
+                var harga_produk  = document.getElementById("harga_produk");
+                harga_produk.innerHTML        = "<b>"+produk["harga"]+",-</b>";
+
+                var button_proceed            = document.getElementById('button_add_to_cart');
+                button_proceed.disabled       = true;
+                var button_cart               = document.getElementById('button_proceed');
+                button_cart.disabled          = true;
+              }
+
+            };
+
+            window.fn.register = function() { 
+            
+              var first_name          = document.getElementById('first-name-register').value;
+              var last_name           = document.getElementById('last-name-register').value;
+              var username            = document.getElementById('username-register').value;
+              var password            = document.getElementById('password-register').value;
+              var confirm_password    = document.getElementById('confirm-password-register').value;
+              var perusahaan          = document.getElementById('perusahaan-register').value;
+              var alamat              = document.getElementById('alamat-register').value;
+              var kota                = document.getElementById('kota-register').value;
+              var kode_pos            = document.getElementById('kode-pos-register').value;
+              var email               = document.getElementById('email-register').value;
+              var phone               = document.getElementById('nomor-telepon-register').value;
+              var provinsi            = document.getElementById('provinsi-register').value;
+
+              var customer = {
+                      "first_name"          : first_name,
+                      "last_name"           : last_name,
+                      "username"            : username,
+                      "password"            : password,
+                      "confirm_password"    : confirm_password,
+                      "perusahaan"          : perusahaan,
+                      "alamat"              : alamat,
+                      "kota"                : kota,
+                      "kode_pos"            : kode_pos,
+                      "email"               : email,
+                      "phone"               : phone,
+                      "provinsi"            : provinsi,
+                    };
+
+               var data = {
+                      "action"              : "register",
+                      "customer"            : customer,
+                    };
+
+                    var url = 'http://revo.webmurahbagus.com/woocommerce-mobile/server/test.php';
+                    var xhr = new XMLHttpRequest();
+                    if ("withCredentials" in xhr){
+                      xhr.open("POST", url, true);
+                    } else if (typeof XDomainRequest != "undefined"){
+                      xhr = new XDomainRequest();
+                      xhr.open(method, url);
+                    } else {
+                      xhr = null;
+                    }
+
+                    xhr.setRequestHeader(
+                      'X-Requested-With', 'XMLHttpRequest');
+                    xhr.send();
+
+                    data = $(this).serialize() + "&" + $.param(data);
+                    $.ajax
+                    ({
+                          url: url, //Relative or absolute path to response.php file
+                          type: "POST",
+                          crossDomain: true,
+                          data: data,
+                          dataType: "text", 
+                          async: false,
+
+                          success: function(data) {
+                            if(data != "" && data != null)
+                            {
+                                alert("Data telah dimasukkan !");
+                                  var content = document.getElementById('content');
+                                  var menu = document.getElementById('menu');
+                                     content.load('login.html')
+                                    .then(menu.close.bind(menu));
+                            }
+                          },
+                          error: function( jqXhr, textStatus, errorThrown ) {
+                              console.log( errorThrown );
+                          } 
+                    });
+
+            };
+
+
+            window.fn.login = function(page) {
+              var username = document.getElementById('username').value;
+              var password = document.getElementById('password').value;
+              var content = document.getElementById('content');
+
+              if (username === 'bob' && password === 'secret') {
+                content.load(page);
+              }
+              else {
+                ons.notification.alert('Incorrect username or password.');
+              }
+            
+            };
+            
+          });
+          
+        </script>
+        
+    </head>
+    
+    <body id="deviceready">
+
+<ons-navigator id="mainNavigator" page="splitter.html" var="myNavigator">
+</ons-navigator>
+
+
+<ons-template id="splitter.html">
+    <ons-splitter>
+      <ons-splitter-side id="menu" side="left" width="220px" collapse>
+        <ons-page>
+          <ons-list>
+          <div class="login-user">
+            <ons-row style="margin-top: 1em;">
+            <ons-col width="40%">
+            <img class="img-profile" src="img/profile.png">
+            </ons-col>
+            <ons-col width="60%" style="text-transform: none; padding-top:1.25em;">
+              Halo,<br>
+              <span style="font-size:11pt;"><b>Guest</b></span>
+            </ons-col>
+            </ons-row>
+          </div>
+            <hr style="margin-top:0px; margin-bottom:0px;">
+            <ons-list-item style="font-size:18px;" onclick="fn.load('home.html')" tappable>
+               <div class="left ion-home" style="margin-right:20px;"></div>
+               Beranda
+            </ons-list-item>
+            <!-- <ons-list-item style="font-size:18px;" onclick="fn.load('register.html')" tappable>
+               <div class="left ion-android-open" style="margin-right:20px;"></div>
+               Daftar
+            </ons-list-item>
+            <ons-list-item style="font-size:18px;" onclick="fn.load('login.html')" tappable>
+               <div class="left ion-android-open" style="margin-right:20px;"></div>
+               Masuk
+            </ons-list-item>
+            <ons-list-item style="font-size:18px;" onclick="fn.load('home.html')" tappable>
+               <div class="left ion-power" style="margin-right:20px;"></div>
+               Keluar
+            </ons-list-item>
+            <ons-list-item style="font-size:18px;" onclick="fn.load('akun.html')" tappable>
+               <div class="left ion-person" style="margin-right:20px;"></div>
+               Profil
+            </ons-list-item> -->
+            <ons-list-item  style="font-size:18px;" onclick="fn.load('cart.html')" tappable>
+               <div class="left ion-ios-cart" style="margin-right:20px;"></div>
+               Keranjang Belanja
+            </ons-list-item>
+            <ons-list-item  style="font-size:18px;" onclick="fn.load('confirmation.html')" tappable>
+               <div class="left ion-social-usd" style="margin-right:20px;"></div>
+               Konfirmasi
+            </ons-list-item>
+          </ons-list>
+        </ons-page>
+      </ons-splitter-side>
+      <ons-splitter-content id="content" page="home.html"></ons-splitter-content>
+    </ons-splitter>
+    </ons-template>
+
+    <ons-template id="home.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button onclick="fn.open()">
+              <ons-icon icon="md-menu"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+
+          <div class="center" style="text-align:center;">
+            <ons-if platform="android">
+              <img src="img/logo_revo.png" style="width:35%; display: inline-block; margin:0 auto">
+            </ons-if>
+            <ons-if platform="ios other">
+              <img src="img/logo_revo_black.png" style="width:35%; display: inline-block; margin:0 auto">
+            </ons-if>
+          </div>
+          <div class="right">
+            <ons-toolbar-button onclick="fn.load('cart.html')">
+              <ons-icon icon="ion-ios-cart"><span id=cart_icon3 style="margin-left:-5px;" class="badge">0</span></ons-icon>
+            </ons-toolbar-button>
+          </div>
+
+
+        </ons-toolbar>
+        
+        <div>
+          <img src="img/a1.jpg" style="width: 100%;">
+        </div>
+        <div class="beranda-kategori">
+          <p><b>Kategori</b></p>
+          <hr>
+        </div>
+
+        <ons-carousel class="carou" swipeable style="height: 150px;" overscrollable auto-scroll item-width="160px">
+          <ons-carousel-item ng-repeat="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]">
+            <div style="background-color: #ccc; height: 160px; width:160px; ">
+              <ons-button style=" width:100%;background-color:transparent; padding:0px; " onclick="fn.load('cart.html')">
+                  <img class="img-carousel-home" src="img/anak.jpg">
+              </ons-button>
+            </div>
+          </ons-carousel-item>
+          <ons-carousel-item ng-repeat="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]">
+            <div style="background-color: #ccc; height: 160px; width:160px;">
+              <ons-button style=" width:100%;background-color:transparent; padding:0px; " onclick="fn.load('cart.html')">
+                <img src="img/baby.jpg">
+              </ons-button>
+            </div>
+          </ons-carousel-item>
+          <ons-carousel-item ng-repeat="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]">
+            <div style="background-color: #ccc; height: 160px; width:160px;">
+              <ons-button style=" width:100%;background-color:transparent; padding:0px; " onclick="fn.load('cart.html')">
+                <img src="img/doll.jpg">
+              </ons-button>
+            </div>
+          </ons-carousel-item>
+          <ons-carousel-item ng-repeat="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]">
+            <div style="background-color: #ccc; height: 160px; width:160px;">
+              <ons-button style=" width:100%;background-color:transparent; padding:0px; " onclick="fn.load('cart.html')">
+                <img src="img/present.jpg">
+              </ons-button>
+            </div>
+          </ons-carousel-item>
+          <ons-carousel-item ng-repeat="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]">
+            <div style="background-color: #ccc; height: 160px; width:160px;">
+              <ons-button style=" width:100%;background-color:transparent; padding:0px; " onclick="fn.load('cart.html')">
+                <img src="img/men.jpg">
+              </ons-button>
+            </div>
+          </ons-carousel-item>
+          <ons-carousel-item ng-repeat="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]">
+            <div style="background-color: #ccc; height: 160px; width:160px;">
+              <ons-button style=" width:100%;background-color:transparent; padding:0px; " onclick="fn.load('cart.html')">
+                <img src="img/women.jpg">
+              </ons-button>
+            </div>
+          </ons-carousel-item>
+        </ons-carousel>
+
+        <ons-row>
+            <ons-col>
+              <ons-button style=" width:100%;background-color:transparent; padding:0px; " onclick="fn.load('cart.html')">
+                <img style="width:100%;" src="img/masuk.jpg">  
+              </ons-button>
+            </ons-col>
+        </ons-row>
+        <ons-row>
+            <ons-col>
+              <ons-button style=" width:100%;background-color:transparent; padding:0px; " onclick="fn.load('cart.html')">
+                <img style="width:100%;" src="img/daftar.jpg">  
+              </ons-button>
+            </ons-col>
+        </ons-row>         
+      </ons-page>
+    </ons-template>
+
+    <ons-template id="akun.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button onclick="fn.open()">
+              <ons-icon icon="md-menu"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">
+            Profile
+          </div>
+          
+        </ons-toolbar>
+
+        <div class="process panel panel-default">
+            <h4 style="text-align:center;"><b>Biodata Diri</b></h4>
+                <hr style="margin:0px 50px;">
+            <form class="form-profile">
+                <div class="form-group">
+                    <label for="nama_depan_profile">Nama Depan</label>
+                    <input type="text" class="form-control" id="nama_depan_profile" placeholder="Nama Depan">
+                </div>
+                <div class="form-group">
+                    <label for="nama_belakang_profile">Nama Belakang</label>
+                    <input type="text" class="form-control" id="nama_belakang_profile" placeholder="Nama Belakang">
+                </div>
+                <div class="form-group">
+                    <label for="nohp_profile">Nomor Handphone <span>*</span></label>
+                    <input type="number" class="form-control" id="nohp_profile" placeholder="Nomor Handphone">
+                </div>
+                <div class="form-group">
+                    <label for="email_profile">Email <span>*</span></label>
+                    <input type="email" class="form-control" id="email_profile" placeholder="Email">
+                </div>
+                <div class="form-group">
+                    <label for="alamat_profile">Alamat</label>
+                    <input type="text" class="form-control" id="alamat_profile" placeholder="Alamat">
+                </div>
+                <div class="form-group">
+                    <label for="perusahaan_profile">Perusahaan</label>
+                    <input type="text" class="form-control" id="perusahaan_profile" placeholder="Perusahaan">
+                </div>
+                
+                <div class="form-group">
+                    <ons-row>
+                        <ons-col width="20%">
+                            <label for="tanggal">Tanggal</label>
+                            <input type="number" class="form-control" id="tanggal">
+                        </ons-col>
+                        <ons-col>
+                        </ons-col>
+                        <ons-col width="40%">
+                            <label for="bulan">Bulan</label>
+                            <div class="dropdown">
+                                <select class="form-control" id="bulan" name="Bulan">
+                                    <option value="januari">Januari</option>
+                                    <option value="februari">Februari</option>
+                                    <option value="maret">Maret</option>
+                                    <option value="april">April</option>
+                                    <option value="mei">Mei</option>
+                                    <option value="juni">Juni</option>
+                                    <option value="juli">Juli</option>
+                                    <option value="agustus">Agustus</option>
+                                    <option value="september">September</option>
+                                    <option value="oktober">Oktober</option>
+                                    <option value="november">November</option>
+                                    <option value="desember">Desember</option>
+                                </select>
+                            </div>
+                        </ons-col>
+                        <ons-col>
+                        </ons-col>
+                        <ons-col width="30%">
+                            <label for="tahun">Tahun</label>
+                            <div class="dropdown">
+                                <select class="form-control" id="tahun" name="Tahun">
+                                    <option value="1960">1960</option>
+                                    <option value="1961">1961</option>
+                                    <option value="1962">1962</option>
+                                    <option value="1963">1963</option>
+                                    <option value="1964">1964</option>
+                                    <option value="1965">1965</option>
+                                    <option value="1966">1966</option>
+                                    <option value="1967">1967</option>
+                                    <option value="1968">1968</option>
+                                    <option value="1969">1969</option>
+                                    <option value="1970">1970</option>
+                                    <option value="1971">1971</option>
+                                    <option value="1972">1972</option>
+                                    <option value="1973">1973</option>
+                                    <option value="1974">1974</option>
+                                    <option value="1975">1975</option>
+                                    <option value="1976">1976</option>
+                                    <option value="1977">1977</option>
+                                    <option value="1978">1978</option>
+                                    <option value="1979">1979</option>
+                                    <option value="1980">1980</option>
+                                    <option value="1981">1981</option>
+                                    <option value="1982">1982</option>
+                                    <option value="1983">1983</option>
+                                    <option value="1984">1984</option>
+                                    <option value="1985">1985</option>
+                                    <option value="1986">1986</option>
+                                    <option value="1987">1987</option>
+                                    <option value="1988">1988</option>
+                                    <option value="1989">1989</option>
+                                    <option value="1990">1990</option>
+                                    <option value="1991">1991</option>
+                                    <option value="1992">1992</option>
+                                    <option value="1993">1993</option>
+                                    <option value="1994">1994</option>
+                                    <option value="1995">1995</option>
+                                    <option value="1996">1996</option>
+                                    <option value="1997">1997</option>
+                                    <option value="1998">1998</option>
+                                    <option value="1999">1999</option>
+                                    <option value="2000">2000</option>
+                                    <option value="2001">2001</option>
+                                    <option value="2002">2002</option>
+                                    <option value="2003">2003</option>
+                                </select>
+                            </div>
+                        </ons-col>
+                    </ons-row>
+                </div>
+                    <div class="form-group">
+                    <label for="kota_profile">Kota</label>
+                    <input type="text" class="form-control" id="kota_profile" placeholder="Kota">
+                </div>
+                <div class="form-group">
+                    <label for="kode_pos_profile">Kode Pos</label>
+                    <input type="number" class="form-control" id="kode_pos_profile" placeholder="Kode Pos">
+                </div>
+                <div class="form-group">
+                    <label for="provinsi_profile">Provinsi</label>
+                    <div class="dropdown">
+                        <select class="form-control" id="provinsi_profile" name="Provinsi">
+                            <option value="bali">Bali</option>
+                            <option value="bangka">Bangka Belitung</option>
+                            <option value="banten">Banten</option>
+                            <option value="bengkulu">Bengkulu</option>
+                            <option value="yogyakarta">DI Yogyakarta</option>
+                            <option value="jakarta ">DKI Jakarta</option>
+                            <option value="golontalo">Golontalo</option>
+                            <option value="jambi">Jambi</option>
+                            <option value="jawabarat">Jawa Barat</option>
+                            <option value="jawatengah">Jawa Tengah</option>
+                            <option value="jawatimur">Jawa Timur</option>
+                            <option value="kalimantanbarat">Kalimantan Barat</option>
+                            <option value="kalimantanselatan">Kalimantan Selatan</option>
+                            <option value="kalimantantengah">Kalimantan Tengah</option>
+                            <option value="kalimantantimur">Kalimantan Timur</option>
+                            <option value="kalimantanutara">Kalimantan Utara</option>
+                            <option value="kepulauanriau">Kepulauan Riau</option>
+                            <option value="lampung">Lampung</option>
+                            <option value="maluku">Maluku</option>
+                            <option value="malukuutara">Maluku Utara</option>
+                            <option value="aceh">Nanggroe Aceh Darussalam</option>
+                            <option value="ntb">Nusa Tenggara Barat</option>
+                            <option value="ntt">Nusa Tenggara Timur</option>
+                            <option value="papua">Papua</option>
+                            <option value="papuabarat">Papua Barat</option>
+                            <option value="riau">Riau</option>
+                            <option value="sulawesibarat">Sulawesi Barat</option>
+                            <option value="sulawesiselatan">Sulawesi Selatan</option>
+                            <option value="sulawesitengah">Sulawesi Tengah</option>
+                            <option value="sulawesitenggara">Sulawesi Tenggara</option>
+                            <option value="sulawesiutara">Sulawesi Utara</option>
+                            <option value="sumaterabarat">Sumatera Barat</option>
+                            <option value="sumateraselatan">Sumatera Selatan</option>
+                            <option value="sumaterautara">Sumatera Utara</option>
+                        </select>
+                    </div>
+                </div>
+            <ons-row style="margin-bottom:1em;">
+                <ons-col>
+                    <span style="color:red;"> * tidak dapat diubah</span>
+                </ons-col>
+            </ons-row>  
+            <ons-row>
+                <ons-col width="30%">
+                </ons-col>
+                <ons-col>
+                    <ons-button type="submit" modifier="large" onclick="fn.load('akun.html')">Submit</ons-button>
+                </ons-col>
+                <ons-col width="30%">
+                </ons-col>
+            </ons-row>  
+            </form>
+            
+        </div>
+        
+      </ons-page>
+    </ons-template>
+
+    <ons-template id="wanita.html">
+      <ons-page>
+
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button onclick="fn.open()">
+              <ons-icon icon="md-menu"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div id="title" class="center"></div>
+          <div class="right">
+            <ons-toolbar-button onclick="fn.load('cart.html')">
+              <ons-icon icon="ion-ios-cart"><span id=cart_icon style="margin-left:-5px;" class="badge">0</span></ons-icon>
+            </ons-toolbar-button>
+          </div>
+        </ons-toolbar>
+        
+        <ons-row>
+            <ons-col style="text-align:center;">
+            <h4>Product</h4>
+            <hr style="width:80%;margin-top:0px; margin-bottom:10px;">
+            </ons-col>
+        </ons-row>
+        <div id="product"></div>
+      </ons-page>
+    </ons-template>
+
+    <ons-template id="detail.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button id="back_button" onclick="fn.load('wanita.html')">
+              <ons-icon icon="ion-arrow-left-c"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">
+            Detail
+          </div>
+          <div class="right">
+            <ons-toolbar-button onclick="fn.load('cart.html')">
+              <ons-icon icon="ion-ios-cart"><span id=cart_icon2 style="margin-left:-5px;" class="badge">0</span></ons-icon>
+            </ons-toolbar-button>
+          </div>
+        </ons-toolbar>
+        
+        <ons-carousel id="carousel" style=" margin-top:10px; margin-bottom:20px;height: 60%; width: 100%" swipeable overscrollable auto-scroll>
+        
+        </ons-carousel>
+        
+        <div class="detail-item col-xs-12">
+            
+        </div>
+        
+      </ons-page>
+    </ons-template>
+
+    <ons-template id="register.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button onclick="fn.open()">
+              <ons-icon icon="md-menu"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">
+            Register
+          </div>
+          
+        </ons-toolbar>
+
+        <div class="process panel panel-default">
+            <h4 style="text-align:center;"><b>Biodata Diri</b></h4>
+                <hr style="margin:0px 50px;">
+            <form class="form-profile">
+                <div class="form-group">
+                  <label for="first-name-register">Nama Depan</label>
+                  <input type="text" class="form-control" id="first-name-register" placeholder="Nama Depan">
+                </div>
+                <div class="form-group">
+                  <label for="last-name-register">Nama Belakang</label>
+                  <input type="text" class="form-control" id="last-name-register" placeholder="Nama Depan">
+                </div>
+                <div class="form-group">
+                    <label for="username-register">Username</label>
+                    <input type="text" class="form-control" id="username-register" placeholder="Username">
+                </div>
+                <div class="form-group">
+                    <label for="password-register">Password</label>
+                    <input type="password" class="form-control" id="password-register" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password-register">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirm-password-register" placeholder="Confirm Password">
+                </div>
+                <div class="form-group">
+                    <label for="perusahaan-register">Nama Perusahaan</label>
+                    <input type="text" class="form-control" id="perusahaan-register" placeholder="Nama Perusahaan">
+                </div>
+                <div class="form-group">
+                    <label for="alamat-register">Alamat Lengkap</label>
+                    <input type="text" class="form-control" id="alamat-register" placeholder="Alamat Lengkap">
+                </div>
+                <div class="form-group">
+                    <label for="kota-register">Kota</label>
+                    <input type="text" class="form-control" id="kota-register" placeholder="Kota">
+                </div>
+                <div class="form-group">
+                    <label for="kode-pos-register">Kode Pos</label>
+                    <input type="text" class="form-control" id="kode-pos-register" placeholder="Kode Pos">
+                </div>
+                <div class="form-group">
+                    <label for="email-register">Email</label>
+                    <input type="text" class="form-control" id="email-register" placeholder="Email">
+                </div>
+                <div class="form-group">
+                    <label for="nomor-telepon-register">Nomor Telepon</label>
+                    <input type="text" class="form-control" id="nomor-telepon-register" placeholder="Nomor Telepon">
+                </div>
+                <div class="form-group">
+                <label for="provinsi-register">Provinsi</label>
+                <div class="dropdown">
+                            <select class="form-control" id="provinsi-register" name="Provinsi">
+                                <option value="bali">Bali</option>
+                                <option value="bangka">Bangka Belitung</option>
+                                <option value="banten">Banten</option>
+                                <option value="bengkulu">Bengkulu</option>
+                                <option value="yogyakarta">DI Yogyakarta</option>
+                                <option value="jakarta ">DKI Jakarta</option>
+                                <option value="golontalo">Golontalo</option>
+                                <option value="jambi">Jambi</option>
+                                <option value="jawabarat">Jawa Barat</option>
+                                <option value="jawatengah">Jawa Tengah</option>
+                                <option value="jawatimur">Jawa Timur</option>
+                                <option value="kalimantanbarat">Kalimantan Barat</option>
+                                <option value="kalimantanselatan">Kalimantan Selatan</option>
+                                <option value="kalimantantengah">Kalimantan Tengah</option>
+                                <option value="kalimantantimur">Kalimantan Timur</option>
+                                <option value="kalimantanutara">Kalimantan Utara</option>
+                                <option value="kepulauanriau">Kepulauan Riau</option>
+                                <option value="lampung">Lampung</option>
+                                <option value="maluku">Maluku</option>
+                                <option value="malukuutara">Maluku Utara</option>
+                                <option value="aceh">Nanggroe Aceh Darussalam</option>
+                                <option value="ntb">Nusa Tenggara Barat</option>
+                                <option value="ntt">Nusa Tenggara Timur</option>
+                                <option value="papua">Papua</option>
+                                <option value="papuabarat">Papua Barat</option>
+                                <option value="riau">Riau</option>
+                                <option value="sulawesibarat">Sulawesi Barat</option>
+                                <option value="sulawesiselatan">Sulawesi Selatan</option>
+                                <option value="sulawesitengah">Sulawesi Tengah</option>
+                                <option value="sulawesitenggara">Sulawesi Tenggara</option>
+                                <option value="sulawesiutara">Sulawesi Utara</option>
+                                <option value="sumaterabarat">Sumatera Barat</option>
+                                <option value="sumateraselatan">Sumatera Selatan</option>
+                                <option value="sumaterautara">Sumatera Utara</option>
+                            </select>
+                </div>
+                
+            </div>
+            <ons-row style="margin-bottom:1em;">
+                <ons-col>
+                    <span style="color:red;"> * harus diisi</span>
+                </ons-col>
+                
+            </ons-row>  
+            <ons-row>
+                <ons-col width="30%">
+                </ons-col>
+                
+                <ons-col>
+                    <ons-button type="submit" modifier="large" onclick="fn.register()">Submit</ons-button>
+                </ons-col>
+                
+                <ons-col width="30%">
+                </ons-col>
+            </ons-row>  
+            </form>
+            
+        </div>
+        
+      </ons-page>
+    </ons-template>
+
+    <ons-template id="login.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button onclick="fn.open()">
+              <ons-icon icon="md-menu"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">
+            Login
+          </div>
+        </ons-toolbar>
+
+        <div class="login-box panel panel-default">
+          <h4 style="text-align:center;">Masuk</h4>
+          <hr>
+          <form>
+              <div class="form-group">
+                  <ons-input id="username" modifier="underbar" placeholder="Username" float></ons-input>
+              </div>
+              <div class="form-group">
+                  <ons-input id="password" modifier="underbar" type="password" placeholder="Password" float></ons-input>
+              </div>
+            
+            <div class="form-group">
+                <ons-button modifier="large" onclick="fn.login('home.html')">Sign in</ons-button>
+            </div>
+            <div class="form-group">
+                <ons-row>
+                    <ons-col>
+
+                    </ons-col>
+                    <ons-col style="text-align:right;">
+                    lupa password?
+                    </ons-col>
+                </ons-row>
+            </div>
+          </form>
+          
+        </div>
+
+      </ons-page>
+    </ons-template>
+
+     <ons-template id="cart.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button onclick="fn.load('home.html')">
+              <ons-icon icon="ion-arrow-left-c"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">
+            Cart
+          </div>
+        </ons-toolbar>
+        
+        <div id="cart_main">
+            
+               
+        </div>
+      </ons-page>
+    </ons-template>
+
+    <ons-template id="proceed.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button id="back_button_proceed" onclick="fn.load('cart.html')">
+              <ons-icon icon="ion-arrow-left-c"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">
+            Biodata Penerima
+          </div>
+        </ons-toolbar>
+        <div class="row bs-wizard" style="border-bottom:0;">
+                
+                <div class="col-xs-3 bs-wizard-step active">
+                  <div class="text-center bs-wizard-stepnum">Step 1</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Data Diri</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+                  <div class="text-center bs-wizard-stepnum">Step 2</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Metode Pembayaran</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+                  <div class="text-center bs-wizard-stepnum">Step 3</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Ringkasan</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step disabled"><!-- active -->
+                  <div class="text-center bs-wizard-stepnum">Step 4</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Konfirmasi</div>
+                </div>
+        </div>
+        <div>
+        <form class="process-pemesan panel panel-default">
+        <h4>Biodata Pemesan</h4>
+        <hr>
+
+            <div class="form-group">
+                <label for="nama_depan">Nama Depan <span id="nama_depan_error"></span></label>
+                <input type="text" class="form-control" id="nama_depan" placeholder="Nama Depan">
+            </div>
+            <div class="form-group">
+                <label for="nama_belakang">Nama Belakang</label>
+                <input type="text" class="form-control" id="nama_belakang" placeholder="Nama Belakang">
+            </div>
+            <div class="form-group">
+                <label for="perusahaan">Perusahaan</label>
+                <input type="text" class="form-control" id="perusahaan" placeholder="Perusahaan">
+            </div>
+            <div class="form-group">
+                <label for="alamat_pengiriman">Alamat Pengiriman <span id="alamat_error"></span></label>
+                <input type="text" class="form-control" id="alamat_pengiriman" placeholder="Alamat Pengiriman">
+            </div>
+            <div class="form-group">
+                <label for="provinsi">Provinsi</label>
+                <div class="dropdown">
+                    <select class="form-control" id="provinsi" name="Provinsi">
+                        <option value="bali">Bali</option>
+                        <option value="bangka">Bangka Belitung</option>
+                        <option value="banten">Banten</option>
+                        <option value="bengkulu">Bengkulu</option>
+                        <option value="yogyakarta">DI Yogyakarta</option>
+                        <option value="jakarta ">DKI Jakarta</option>
+                        <option value="golontalo">Golontalo</option>
+                        <option value="jambi">Jambi</option>
+                        <option value="jawabarat">Jawa Barat</option>
+                        <option value="jawatengah">Jawa Tengah</option>
+                        <option value="jawatimur">Jawa Timur</option>
+                        <option value="kalimantanbarat">Kalimantan Barat</option>
+                        <option value="kalimantanselatan">Kalimantan Selatan</option>
+                        <option value="kalimantantengah">Kalimantan Tengah</option>
+                        <option value="kalimantantimur">Kalimantan Timur</option>
+                        <option value="kalimantanutara">Kalimantan Utara</option>
+                        <option value="kepulauanriau">Kepulauan Riau</option>
+                        <option value="lampung">Lampung</option>
+                        <option value="maluku">Maluku</option>
+                        <option value="malukuutara">Maluku Utara</option>
+                        <option value="aceh">Nanggroe Aceh Darussalam</option>
+                        <option value="ntb">Nusa Tenggara Barat</option>
+                        <option value="ntt">Nusa Tenggara Timur</option>
+                        <option value="papua">Papua</option>
+                        <option value="papuabarat">Papua Barat</option>
+                        <option value="riau">Riau</option>
+                        <option value="sulawesibarat">Sulawesi Barat</option>
+                        <option value="sulawesiselatan">Sulawesi Selatan</option>
+                        <option value="sulawesitengah">Sulawesi Tengah</option>
+                        <option value="sulawesitenggara">Sulawesi Tenggara</option>
+                        <option value="sulawesiutara">Sulawesi Utara</option>
+                        <option value="sumaterabarat">Sumatera Barat</option>
+                        <option value="sumateraselatan">Sumatera Selatan</option>
+                        <option value="sumaterautara">Sumatera Utara</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="kota_pengiriman">Kota <span id="kota_error"></label>
+                <input type="text" class="form-control" id="kota_pengiriman" placeholder="Kota">
+            </div>
+            <div class="form-group">
+                <label for="kode_pos">Kode Pos <span id="kode_pos_error"></label>
+                <input type="number" class="form-control" id="kode_pos" placeholder="Kode Pos">
+            </div>
+            <div class="form-group">
+                <label for="email">Email <span id="email_error"></span> <br> <span style="color:grey; font-size:12px">(Resi pembayaran akan dikirim ke email ini)</span></label>
+                <input type="text" class="form-control" id="email" placeholder="Email">
+            </div>
+            <div class="form-group">
+                <label for="nomor_telepon">Nomor Telepon <span id="nomor_telepon_error"></label>
+                <input type="number" class="form-control" id="nomor_telepon" placeholder="Nomor Telepon">
+            </div>
+        <hr>
+        <ons-button modifier="large" onclick="fn.proceedDataDiri()">Lanjutkan</ons-button>
+          
+        </form>
+        </div>
+      </ons-page>
+    </ons-template>
+
+    <ons-template id="pembayaran.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button onclick="fn.load('proceed.html')">
+              <ons-icon icon="ion-arrow-left-c"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">
+            Pembayaran
+          </div>
+        </ons-toolbar>
+        <div class="row bs-wizard" style="border-bottom:0;">
+                
+                <div class="col-xs-3 bs-wizard-step complete">
+                  <div class="text-center bs-wizard-stepnum">Step 1</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Data Diri</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step active"><!-- complete -->
+                  <div class="text-center bs-wizard-stepnum">Step 2</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Metode Pembayaran</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+                  <div class="text-center bs-wizard-stepnum">Step 3</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Ringkasan</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step disabled"><!-- active -->
+                  <div class="text-center bs-wizard-stepnum">Step 4</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Konfirmasi</div>
+                </div>
+        </div>
+        <div>
+        <form class="process panel panel-default">
+        <h4>Metode Pembayaran</h4>
+        <hr>
+        <div class="form-group">
+            <label for="metode">Metode pembayaran yang digunakan :</label>
+            <ons-row>
+                <ons-col width="60%">
+                    <div class="dropdown">
+                        <select class="form-control" id="metode" name="metode">
+                            <option value="transfer">Transfer Bank</option>
+                            <option value="veritrans">Veri Trans</option>
+                            
+                        </select>
+                    </div>
+                </ons-col>
+            </ons-row>
+        </div>
+
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+              <div class="panel panel-default">
+                
+                <a class="collapsed panel-title" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+
+                    <div class="heading-panel panel-heading" role="tab" id="headingOne">
+                      
+                      <h4 class="panel-title">
+                          Transfer Bank
+                      </h4>
+                    </div>
+                </a>
+                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                  <div class="panel-body">
+                      <ons-row style="text-align:center; margin-bottom:5px;">
+                              <ons-col width='10%'>
+                              </ons-col>
+                              <ons-col>
+                               <img src="img/bank.png">
+                              </ons-col>
+                              <ons-col width='10%'>
+                              </ons-col>
+                      </ons-row> 
+                      <ons-row width="100%">
+                          <ons-col style="text-align:left;" width="70%">
+                              Biaya Transaksi
+                          </ons-col>
+                              
+                          <ons-col id="biaya_transaksi_bank" style="text-align:right;" width="30%">
+                              Rp 39.900
+                          </ons-col>
+                      </ons-row>
+                      <ons-row width="100%">
+                          <ons-col style="text-align:left;" width="70%">
+                              Biaya Kurir
+                          </ons-col>
+                          <ons-col id="biaya_kurir_bank" style="text-align:right;" width="30%">
+                              Rp 15.000
+                          </ons-col>
+                      </ons-row>
+                      
+                      
+
+                    <ons-row style="text-align:center; margin-bottom:5px;">
+                      <ons-col style="color:grey; text-align:left;">
+                        <p>Total</p>
+                      </ons-col>
+                      <ons-col id="total_bank"style="text-align:right;">
+                       <b>Rp 54.900</b>
+                      </ons-col>
+                    </ons-row> 
+                    <br>
+                    <ons-row style="margin-bottom:5px;">
+                        <ons-col width="5%">
+                        </ons-col>
+                        <ons-col style="color:grey;">
+                        <ul class="pembayaran-info">
+                        <li>Total belanja Anda <b>belum termasuk</b> kode pembayaran.</li>
+                        <li>Transaksi dengan menggunakan metode pembayaran transfer akan ditambahan kode pembayaran.</li>
+                        <li>Pembayaran dengan angka yang tidak tepat akan menyebabkan verifikasi pembayaran menjadi terhambat.</li>
+                        </ul>
+                        </ons-col>
+                        
+                        
+                    </ons-row>
+                        
+
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default">
+                <a class="collapsed panel-title" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    <div class="heading-panel panel-heading" role="tab" id="headingThree">
+                      <h4 class="panel-title">
+                          Veri Trans
+                      </h4>
+                    </div>
+                </a>
+                <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                  <div class="panel-body">
+                      <ons-row width="100%">
+                          <ons-col style="text-align:left;" width="70%">
+                              Biaya Transaksi
+                          </ons-col>
+                              
+                          <ons-col id="biaya_transaksi_veritrans" style="text-align:right;" width="30%">
+                              Rp 39.900
+                          </ons-col>
+                      </ons-row>
+                      <ons-row width="100%">
+                          <ons-col style="text-align:left;" width="70%">
+                              Biaya Kurir
+                          </ons-col>
+                          <ons-col id="biaya_kurir_veritrans" style="text-align:right;" width="30%">
+                              Rp 15.000
+                          </ons-col>
+                      </ons-row>
+                      <ons-row width="100%">
+                          <ons-col style="text-align:left;" width="70%">
+                              Total Belanja
+                          </ons-col>
+                          <ons-col id="total_veritrans" style="text-align:right;" width="30%">
+                              <b>Rp 54.900</b>
+                          </ons-col>
+                      </ons-row>
+                      <ons-row style="margin-top:1em;">
+                          <ons-col class="panel panel-default bank-cart" style="text-align:center;" width="45%">
+                              <img src="img/mandiri.png" class="img-bank">
+                              <h6><b>Bank Mandiri</b></h6>
+                              <p> Cabang Citraland <br>
+                                  165 003 0073122 <br>
+                                  a/n Myme International</p>
+                          </ons-col>
+                          <ons-col class="panel panel-default bank-cart" style="text-align:center; margin-top: 0px;" width="45%">
+                              <img src="img/bca.png" class="img-bank">
+                              <h6><b>Bank BCA</b></h6>
+                              <p> Cabang Citraland <br>
+                                  372 178 5061 <br>
+                                  a/n Myme International</p>
+                          </ons-col>
+                          
+                      </ons-row>
+                      <ons-row style="margin-top:1em;">
+                          <ons-col class="panel panel-default bank-cart" style="text-align:center; margin-top: 0px;" width="45%">
+                              <img src="img/bni.png" class="img-bank">
+                              <h6><b>Bank BNI</b></h6>
+                              <p> Cabang Lontar <br>
+                                  800 600 6007 <br>
+                                  a/n Myme International</p>
+                          </ons-col>
+                          <ons-col class="panel panel-default bank-cart" style="text-align:center; margin-top: 0px;" width="45%">
+                              <img src="img/bri.png" class="img-bank">
+                              <h6><b>Bank BRI</b></h6>
+                              <p> Cabang G-walk <br>
+                                  037 701 000435302 <br>
+                                  a/n Myme International</p>
+                          </ons-col>
+                      </ons-row>
+                        
+
+                  </div>
+                </div>
+              </div>
+            </div>
+<!-- 
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingOne">
+                  <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                      Transfer Bank
+                    </a>
+                  </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                  <div class="panel-body">
+                    blablabla
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingTwo">
+                  <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                      Mandiri Clickpay
+                    </a>
+                  </h4>
+                </div>
+                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                  <div class="panel-body">
+                      blablabla
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingThree">
+                  <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                      Mandiri E-Cash
+                    </a>
+                  </h4>
+                </div>
+                <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                  <div class="panel-body">
+                    blablabla
+                  </div>
+                </div>
+              </div>
+            </div> -->
+            
+        <hr>
+        <ons-button modifier="large" id="button_lanjutkan_pembayaran">Lanjutkan</ons-button>
+          
+        </form>
+        </div>
+      </ons-page>
+    </ons-template>
+
+    <ons-template id="summary1.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button id="back_button_summary1">
+              <ons-icon icon="ion-arrow-left-c"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">
+            Ringkasan Transaksi
+          </div>
+        </ons-toolbar>
+        <div class="row bs-wizard" style="border-bottom:0;">
+                
+                <div class="col-xs-3 bs-wizard-step complete">
+                  <div class="text-center bs-wizard-stepnum">Step 1</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Data Diri</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step complete"><!-- complete -->
+                  <div class="text-center bs-wizard-stepnum">Step 2</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Metode Pembayaran</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step active"><!-- complete -->
+                  <div class="text-center bs-wizard-stepnum">Step 3</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Ringkasan</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step disabled"><!-- active -->
+                  <div class="text-center bs-wizard-stepnum">Step 4</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Konfirmasi</div>
+                </div>
+        </div>
+        <div class="process panel panel-default">
+             <div class="panel panel-default">
+                  <div class="panel-heading panel-style">Informasi Pembeli</div>
+                  <div id="data_customer" class="panel-body">
+                    <!-- <p>Andra Agusta</p>
+                    <p>085349981161</p>
+                    <p>Taman Puspa Raya B9/17 Citraland</p>
+                    <p>Surabaya</p> -->
+                  </div>
+              </div> 
+
+              <div id="barang_belanja" class="panel panel-default">
+              
+               </div>
+
+              <div class="panel panel-default">
+                  <div class="panel-heading panel-style">Metode Pembayaran</div>
+                  <div class="panel-body">
+                    <ons-row style="text-align:center; margin-bottom:5px;">
+                      
+                      <ons-col style="color:grey; text-align:left;">
+                        <p>Pembayaran Melalui <b>Transfer Bank</b></p>
+                      </ons-col>
+                      <ons-col>
+                       <img src="img/bank.png">
+                      </ons-col>
+                    </ons-row> 
+
+                    <ons-row style="text-align:center; margin-bottom:5px;">
+                      <ons-col style="color:grey; text-align:left;">
+                        <p>Total</p>
+                      </ons-col>
+                      <ons-col id="total_transaksi" style="text-align:right;">
+                       <b>Rp 54.900</b>
+                      </ons-col>
+                    </ons-row> 
+                    <br>
+                    <ons-row style="text-align:center; margin-bottom:5px;">
+                        <ons-col width="5%">
+                        </ons-col>
+                        <ons-col style="color:grey; text-align:center;">
+                        <i>Intruksi Pembayaran akan diberikan di halaman selanjutnya</i>
+                        </ons-col>
+                        
+                        
+                    </ons-row>  
+                  </div>
+              </div>
+
+            
+            
+
+            
+            <ons-button id="checkout_button" modifier="large" onclick="showDialog('dialog-2')">Check Out</ons-button>
+
+            <ons-alert-dialog id="dialog-2">
+              <div class="alert-dialog-title">Confirm</div>
+              <div class="alert-dialog-content">
+                Lanjut ke pembayaran?
+              </div>
+              <div class="alert-dialog-footer">
+                <button class="alert-dialog-button" onclick="hideDialog('dialog-2')">Cancel</button>
+                <button id="checkout_ok_button" class="alert-dialog-button" onclick="fn.load('checkout.html')">OK</button>
+              </div>
+            </ons-alert-dialog>
+
+
+        </div>
+      </ons-page>
+    </ons-template>
+
+    <ons-template id="checkout.html">
+      <ons-page>
+        <ons-toolbar>
+          
+          <div class="center">
+            Konfirmasi Pembayaran
+          </div>
+
+        </ons-toolbar>
+        <div class="row bs-wizard" style="border-bottom:0;">
+                
+                <div class="col-xs-3 bs-wizard-step complete">
+                  <div class="text-center bs-wizard-stepnum">Step 1</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Data Diri</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step complete"><!-- complete -->
+                  <div class="text-center bs-wizard-stepnum">Step 2</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Metode Pembayaran</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step complete"><!-- complete -->
+                  <div class="text-center bs-wizard-stepnum">Step 3</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Ringkasan</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step active"><!-- active -->
+                  <div class="text-center bs-wizard-stepnum">Step 4</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <div class="bs-wizard-dot"></div>
+                  <div class="bs-wizard-info text-center">Konfirmasi</div>
+                </div>
+        </div>
+
+        <div class="process panel panel-default">
+        <h5 style="text-align:center;">Kode Transaksi</h5>
+        <p style="text-align:center;"><b><i>#1434529142</i></b></p>
+        <p style="text-align:center;">Kami akan hubungi anda melalui email <b> @andragustak@gmail.com </b> dan nomor handphone <b> 085349981161 </b> </p>
+            <hr>
+
+        <ons-row style="text-align:center; margin-bottom:5px;">
+            <ons-col width="5%">
+            </ons-col>
+            <ons-col style="color:grey; text-align:left;">
+            Jumlah yang harus dilunaskan:
+            </ons-col>
+            <ons-col>
+             <b>Rp 54.900</b>
+            </ons-col>
+            
+        </ons-row>  
+        <ons-row style="text-align:center;">
+          <ons-col width="5%">
+            </ons-col>
+            <ons-col style="text-align:left;">
+                Silahkan lakukan pembayaran ke salah satu nomor rekening berikut:
+            </ons-col>
+            <ons-col width="5%">
+            </ons-col>
+        </ons-row>
+
+          <ons-row class="panel panel-default rekening" style="margin-top:0.5em;">
+            <ons-col width="30%">
+            <div style="padding-top:40%">
+                <img src="img/bni.png" style="margin: 0 auto;">
+            </div>
+            </ons-col>
+            <ons-col>
+                <h6><b>Bank BNI</b></h6>
+                <p> Cabang Lontar <br>
+                800 600 6007 <br>
+                a/n Myme International</p>
+            </ons-col>
+            
+          </ons-row>
+
+          <ons-row class="panel panel-default rekening" style="margin-top:0.5em;">
+            <ons-col width="30%">
+            <div style="padding-top:40%">
+            <img src="img/mandiri.png" style="margin: 0 auto;">
+            </div>
+            </ons-col>
+            <ons-col>
+                <h6><b>Bank Mandiri</b></h6>
+                              <p> Cabang Citraland <br>
+                                  165 003 0073122 <br>
+                                  a/n Myme International</p>
+            </ons-col>
+            
+          </ons-row>
+          
+
+          <ons-row class="panel panel-default rekening" style="margin-top:0.5em;">
+            <ons-col width="30%">
+            <div style="padding-top:40%">
+                <img src="img/bca.png" style="margin: 0 auto;">
+            </div>
+            </ons-col>
+            <ons-col>
+                <h6><b>Bank BCA</b></h6>
+                              <p> Cabang Citraland <br>
+                                  372 178 5061 <br>
+                                  a/n Myme International</p>
+            </ons-col>
+            
+          </ons-row>
+
+          <ons-row class="panel panel-default rekening" style="margin-top:0.5em;">
+            <ons-col width="30%">
+            <div style="padding-top:40%">
+                <img src="img/bri.png" style="margin: 0 auto;">
+            </div>
+            </ons-col>
+            <ons-col>
+                <h6><b>Bank BRI</b></h6>
+                              <p> Cabang G-walk <br>
+                                  037 701 000435302 <br>
+                                  a/n Myme International</p>
+            </ons-col>
+            
+          </ons-row>
+
+          <ons-row style="text-align:center; margin-bottom:5px; margin-top:1em;">
+          <ons-col width="5%">
+            </ons-col>
+              <ons-col style="color:grey; text-align:left;">
+              Jumlah yang harus dilunaskan:
+              </ons-col>
+              <ons-col>
+               <b>Rp 54.900</b>
+              </ons-col>
+          </ons-row> 
+
+          <ons-row style="text-align:center; margin-bottom:5px;">
+          <ons-col width="5%">
+            </ons-col>
+              <ons-col style="color:grey; text-align:left;">
+                <ul class="pembayaran-info" style="color:grey;">
+                    <li>Pastikan Anda membayar sama dengan angka total yang tertera diatas</li>
+                    <li>Pembayaran dengan angka yang tidak tepat akan menyebabkan verifikasi pembayaran menjadi terhambat</li>
+                </ul>
+              </ons-col>
+              <ons-col width="5%">
+            </ons-col>
+          </ons-row> 
+           
+            <ons-button modifier="large" onclick="fn.load('home.html')">home</ons-button>
+
+        </div>
+
+      </ons-page>
+    </ons-template>
+    <ons-template id="confirmation.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button onclick="fn.load('home.html')">
+              <ons-icon icon="ion-arrow-left-c"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+
+          <div class="center">
+            Konfirmasi Pembayaran
+          </div>
+          <div class="right">
+            <ons-toolbar-button onclick="fn.load('form.html')">
+              <ons-icon icon="ion-document-text"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+        </ons-toolbar>
+
+        <div id="confirm_container">
+       <!--  <div class="process panel panel-default">
+          <h5 style="text-align:center;">Kode Transaksi</h5>
+          <p style="text-align:center; font-size:12pt;"><b><i>#1434529142</i></b></p>
+          
+          <ons-row style="margin-bottom:5px;">
+                  
+                  <ons-col width="70%" style="padding-left:10px;">
+                      <p style="margin:0px;">RIVER ISLAND | Leopard Print T-Shirt</p>
+                      <span style="color:grey;">Quantity : 3</span>
+                  </ons-col>
+                  <ons-col width="30%">
+                      <p><b>Rp 120.000,-</b></p>
+                  </ons-col>
+          </ons-row>
+
+          <ons-row>
+                  
+                  <ons-col width="70%" style="padding-left:10px;">
+                      <p style="margin:0px;">RIVER ISLAND | Leopard Print T-Shirt</p>
+                      <span style="color:grey;">Quantity : 2</span>
+                  </ons-col>
+                  <ons-col width="30%">
+                      <p><b>Rp 120.000,-</b></p>
+                  </ons-col>
+          </ons-row>
+            <hr style="margin:10px;">
+          <ons-row style="margin-bottom:10px;">
+                <ons-col width="20%">
+                </ons-col>
+                <ons-col width="50%">
+                <b>Grand Total</b>
+                </ons-col>
+                <ons-col width="30%">
+                    <b>Rp 360.000,-</b>
+                </ons-col>
+          </ons-row>        
+          <p style="text-align:justify; font-size:10pt; color:red; margin-left: 20px; margin-right: 20px;">* Pastikan sudah membayar sesuai Grand Total yang tercantum diatas. Setelah itu silahkan tekan tombol "Konfirmasi" dibawah ini  <br>
+             * Tombol "Konfirmasi" hanya dapat di tekan 1 kali saja</p>
+
+
+              <ons-button modifier="large" onclick="fn.load('home.html')">Konfirmasi</ons-button>
+        </div>
+
+        <div class="panel-confirmation">
+          <div class="ion-android-done" style="font-size: 90px; color:green;"></div>
+          Tidak ada Konfirmasi Pembelian
+        </div> -->
+        </div>
+      </ons-page>
+    </ons-template>
+
+    <ons-template id="form.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="left">
+            <ons-toolbar-button onclick="fn.load('confirmation.html')">
+              <ons-icon icon="ion-arrow-left-c"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+
+          <div class="center">
+            Form Konfirmasi
+          </div>
+          
+        </ons-toolbar>
+
+        <div class="process panel panel-default">
+            <h4 style="text-align:center;"><b>Form Konfirmasi Pembayaran</b></h4>
+                <hr style="margin:0px 50px;">
+            <form class="form-profile">
+                <div class="form-group">
+                    <label for="kode_konfirmasi">Kode Transaksi</label>
+                    <input type="number" class="form-control" id="kode_konfirmasi" placeholder="1708">
+                </div>
+                <div class="form-group">
+                    <label for="nama_konfirmasi">Nama <span id="nama_depan_form_error"></span></label>
+                    <input type="text" class="form-control" id="nama_konfirmasi" placeholder="Nama">
+                </div>
+                <div class="form-group">
+                    <label for="email_konfirmasi">Email <span id="email_form_error"></span></label>
+                    <input type="text" class="form-control" id="email_konfirmasi" placeholder="Email">
+                </div>
+                <div class="form-group">
+                    <label for="provinsi-register">Bank</label>
+                    <div class="dropdown">
+                        <select class="form-control" id="bank_konfirmasi" name="bank">
+                            <option value="bca">BCA</option>
+                            <option value="mandiri">Mandiri</option>
+                            <option value="bni">BNI</option>
+                            <option value="bri">BRI</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Tanggal Transfer</label>
+                    <ons-row>
+                        <ons-col width="25%">
+                            <div class="dropdown">
+                                <select class="form-control" id="tanggal" name="Tanggal">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                    <option value="13">13</option>
+                                    <option value="14">14</option>
+                                    <option value="15">15</option>
+                                    <option value="16">16</option>
+                                    <option value="17">17</option>
+                                    <option value="18">18</option>
+                                    <option value="19">19</option>
+                                    <option value="20">20</option>
+                                    <option value="21">21</option>
+                                    <option value="22">22</option>
+                                    <option value="23">23</option>
+                                    <option value="24">24</option>
+                                    <option value="25">25</option>
+                                    <option value="26">26</option>
+                                    <option value="27">27</option>
+                                    <option value="28">28</option>
+                                    <option value="29">29</option>
+                                    <option value="30">30</option>
+                                    <option value="31">31</option>
+                                </select>
+                            </div>
+                        </ons-col>
+                        <ons-col width="1%">
+                        </ons-col>
+                        <ons-col width="43%">
+                            <div class="dropdown">
+                                <select class="form-control" id="bulan" name="Bulan">
+                                    <option value="januari">Januari</option>
+                                    <option value="februari">Februari</option>
+                                    <option value="maret">Maret</option>
+                                    <option value="april">April</option>
+                                    <option value="mei">Mei</option>
+                                    <option value="juni">Juni</option>
+                                    <option value="juli">Juli</option>
+                                    <option value="agustus">Agustus</option>
+                                    <option value="september">September</option>
+                                    <option value="oktober">Oktober</option>
+                                    <option value="november">November</option>
+                                    <option value="desember">Desember</option>
+                                </select>
+                            </div>
+                        </ons-col>
+                        <ons-col width="1%">
+                        </ons-col>
+                        <ons-col width="30%">
+                            <div class="dropdown">
+                                <select class="form-control" id="tahun" name="Tahun">
+                                    <!-- <option value="2016">2016</option> -->
+                                </select>
+                            </div>
+                        </ons-col>
+                    </ons-row>
+                </div>
+                <div class="form-group">
+                    <label for="nilai_transfer_konfirmasi">Nilai Transfer <span id="nilai_transfer_form_error"></span></label>
+                    <input type="number" class="form-control" id="nilai_transfer_konfirmasi" placeholder="100xxx">
+                </div>
+                <div class="form-group">
+                    <label for="foto_konfirmasi">Foto Bukti Pembayaran</label>
+                    <input type='file' max-size=30000 onchange="readURL(this);" />
+                    <img style="margin:0 auto; display:none;" class="image-konfirmasi" id="foto_konfirmasi" src="#" alt="your image" />
+                </div>
+                <div class="form-group">
+                    <label for="catatan_konfirmasi">Catatan</label>
+                    <textarea class="form-control" rows="5" id="catatan_konfirmasi" placeholder="Text...."></textarea>
+                </div>
+            <ons-row>
+                <ons-col width="30%">
+                </ons-col>
+                <ons-col>
+                    <ons-button type="submit" modifier="large" onclick="fn.paymentConfirmation()">Submit</ons-button>
+                </ons-col>
+                <ons-col width="30%">
+                </ons-col>
+            </ons-row>  
+            </form>
+            
+        </div>
+
+        
+      </ons-page>
+    </ons-template>
+
+    <style type="text/css">
+      .notifyjs-corner {
+            left: 0 !important;
+            margin-right: 19%;
+            margin-left: 19%;
+            margin-top: 5em;
+            position: relative;
+            text-transform: none; b
+        }
+    </style>
+  </body>
+
+  <script>
+    $(document).ready(function(){
+      setTimeout(function(){
+        loadNotification();
+      }, 200);
+    });
+
+    function readURL(input) {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#foto_konfirmasi')
+                .attr('src', e.target.result)
+                .attr('style', 'display:content');
+        };
+
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+    function loadNotification(){
+      var cart = JSON.parse(storage.getItem("cart"));
+      if(cart != null)
+      {
+        var cart_length = cart.length;
+        storage.setItem("cart", JSON.stringify(cart));
+
+        var icon = document.getElementById("cart_icon3");
+        icon.innerHTML = cart_length;
+      }
+    }
+  </script>
+
+
+</html>
